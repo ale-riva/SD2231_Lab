@@ -127,4 +127,27 @@ sim('SD2231_Lab1_2022.slx')
 % Calculate the X-Y data, plot and estimate the optimum slip value
 % Plot longitudinal slip on X-axis and used friction mu on y-axis
 
+%% Task 2c
+mu_fl = -out.FxFL./out.FzFL;
+mu_fr = -out.FxFR./out.FzFR;
+mu_rl = -out.FxRL./out.FzRL;
+mu_rr = -out.FxRR./out.FzRR;
 
+
+figure
+subplot(2,2,1)
+plot(out.FL_slip,mu_fl)
+grid on; title('FL')
+subplot(2,2,2)
+plot(out.FR_slip,mu_fr)
+grid on; title('FR')
+subplot(2,2,3)
+plot(out.RL_slip,mu_rl)
+grid on; title('RL')
+subplot(2,2,4)
+plot(out.RR_slip,mu_rr)
+grid on; title('RR')
+
+figure
+plot(out.FL_slip,mu_fl)
+grid on; title('FL')
