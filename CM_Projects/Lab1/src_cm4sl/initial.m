@@ -160,15 +160,52 @@ grid on; title('RR')
 figure
 plot(RR_slip(7660:8156),mu_rr(7660:8156))
 grid on; title('RR')
+%% Figures for report
 figure
 plot(RR_slip(175:3630),-mu_rr(175:3630),'LineWidth',1)
 grid on
-title('Traction (RR)')
+title('Traction')
 tmp = mu_rr(175:3630);
 [m,idx] = max(abs(tmp));
+xlabel('Longitudinal slip $s$','Interpreter','latex')
+ylabel('Friction coefficient $\mu$','Interpreter','latex')
 hold on
 plot(RR_slip(175+idx),-mu_rr(175+idx),'r*')
+legend('RR','Max RR')
 dim = [0.2 0.5 0.2 0.2];
 
-str = {sprintf('Maximum value (%f,%f)', RR_slip(175+idx),-mu_rr(175+idx))};
+str = {sprintf('Max point (%f,%f)', RR_slip(175+idx),-mu_rr(175+idx))};
+annotation('textbox',dim,'String',str,'FitBoxToText','on');
+
+
+figure
+plot(RR_slip(7660:8156),mu_rr(7660:8156),'LineWidth',1)
+grid on
+title('Braking')
+tmp = mu_rr(7660:8156);
+[m,idx] = max(abs(tmp));
+legend('RR')
+xlabel('Longitudinal slip $s$','Interpreter','latex')
+ylabel('Friction coefficient $\mu$','Interpreter','latex')
+hold on
+plot(RR_slip(7660+idx),mu_rr(7660+idx),'r*')
+dim = [0.2 0.5 0.42 0.42];
+
+str = {sprintf('Max point (%f,%f)', RR_slip(7660+idx),mu_rr(7660+idx))};
+annotation('textbox',dim,'String',str,'FitBoxToText','on');
+
+hold on
+plot(FL_slip(7660:8000),mu_fl(7660:8000),'LineWidth',1)
+grid on
+tmp = mu_fl(7660:8000);
+[m,idx] = max(abs(tmp));
+
+xlabel('Longitudinal slip $s$','Interpreter','latex')
+ylabel('Friction coefficient $\mu$','Interpreter','latex')
+hold on
+plot(FL_slip(7660+idx),mu_fl(7660+idx),'b*')
+legend('RR','Max RR','FL','Max FL')
+dim = [0.2 0.5 0.17 0.17];
+
+str = {sprintf('Max point (%f,%f)', FL_slip(7660+idx),mu_fl(7660+idx))};
 annotation('textbox',dim,'String',str,'FitBoxToText','on');
