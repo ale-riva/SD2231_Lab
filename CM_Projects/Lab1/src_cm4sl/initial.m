@@ -8,6 +8,7 @@
 
 clc
 close all
+clear all
 
 global Veh
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,32 +123,52 @@ Ki_brake = 0;
 Kd_brake = 0;
 
 % Run your model
-sim('SD2231_Lab1_2022.slx')
+out = sim('SD2231_Lab1_2022.slx')
 
 % Calculate the X-Y data, plot and estimate the optimum slip value
 % Plot longitudinal slip on X-axis and used friction mu on y-axis
 
 %% Task 2c
+close all
 mu_fl = -out.FxFL./out.FzFL;
 mu_fr = -out.FxFR./out.FzFR;
 mu_rl = -out.FxRL./out.FzRL;
 mu_rr = -out.FxRR./out.FzRR;
 
 
-figure
-subplot(2,2,1)
-plot(out.FL_slip,mu_fl)
-grid on; title('FL')
-subplot(2,2,2)
-plot(out.FR_slip,mu_fr)
-grid on; title('FR')
-subplot(2,2,3)
-plot(out.RL_slip,mu_rl)
-grid on; title('RL')
-subplot(2,2,4)
-plot(out.RR_slip,mu_rr)
-grid on; title('RR')
+FL_slip = out.FL_slip;
+FR_slip = out.FR_slip;
+RL_slip = out.RL_slip;
+RR_slip = out.RR_slip;
+
 
 figure
-plot(out.FL_slip,mu_fl)
+subplot(2,2,1)
+plot(FL_slip(7660:8000),mu_fl(7660:8000))
 grid on; title('FL')
+subplot(2,2,2)
+plot(FR_slip(7660:8000),mu_fr(7660:8000))
+grid on; title('FR')
+subplot(2,2,3)
+plot(RL_slip(7660:8000),mu_rl(7660:8000))
+grid on; title('RL')
+subplot(2,2,4)
+plot(RR_slip(7660:end),mu_rr(7660:end))
+grid on; title('RR')
+
+
+figure
+plot(RR_slip(7660:8156),mu_rr(7660:8156))
+grid on; title('RR')
+figure
+plot(RR_slip(175:3630),-mu_rr(175:3630),'LineWidth',1)
+grid on
+title('Traction (RR)')
+tmp = mu_rr(175:3630);
+[m,idx] = max(abs(tmp));
+hold on
+plot(RR_slip(175+idx),-mu_rr(175+idx),'r*')
+dim = [0.2 0.5 0.2 0.2];
+
+str = {sprintf('Maximum value (%f,%f)', RR_slip(175+idx),-mu_rr(175+idx))};
+annotation('textbox',dim,'String',str,'FitBoxToText','on');
