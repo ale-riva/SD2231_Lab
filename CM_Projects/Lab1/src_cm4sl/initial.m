@@ -29,16 +29,19 @@ Kp_br_r = 1;
 Ki_br_r = 0;
 Kd_br_r = 0;
 
-Kp_tr = 1;
-Ki_tr = 0;
-Kd_tr = 0;
+
+T = 0.039; L  = 0.052;
+Kp_tr = 1.2*T/L;
+Ki_tr = 0.6*T/(L^2);
+Kd_tr = 0.6*T;
 
 N = 0;
 delay = 250;
-threshold = 0.07;
+threshold = 0.01;
 ref_tr = 0.06;
 ref_br_f = 0.15;
-ref_br_r = 0.17;    
+ref_br_r = 0.17;   
+step_time = 2;
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Vehicle parameters DO NOT CHANGE
 % ______________________________________________________________________________
@@ -227,3 +230,28 @@ dim = [0.2 0.5 0.17 0.17];
 
 str = {sprintf('Max point (%f,%f)', FL_slip(7660+idx),mu_fl(7660+idx))};
 annotation('textbox',dim,'String',str,'FitBoxToText','on');
+
+%%
+clf
+figure
+slip = out.RL_slip(2050:7000);
+time = out.tout(2050:7000);
+plot(time,slip)
+hold on
+grid on
+d2 = diff(diff(out.RL_slip(2050:7002)))/dt;
+plot(time,d2)
+hold on
+
+
+ds=diff(slip)./diff(time);
+I = find(time == 2.085);
+d1 = diff(out.RL_slip(2050:7002))/dt;
+k=I; % point number 220
+tang=(time-time(k))*d1(k)+slip(k);
+plot(time,tang)
+yline(max(out.RL_slip(2050:7002)))
+legend("slip","2d","t")
+%scatter(time(k),slip(k))
+
+
