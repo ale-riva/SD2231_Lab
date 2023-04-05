@@ -31,13 +31,13 @@ Kd_br_r = 0;
 
 
 T = 0.039; L  = 0.052;
-Kp_tr = 1.2*T/L;
-Ki_tr = 0.6*T/(L^2);
-Kd_tr = 0.6*T;
+Kp_tr = 4*T/L;
+Ki_tr = 4*T/(L^2);
+Kd_tr = 0.1 *T;
 
 N = 0;
 delay = 250;
-threshold = 0.01;
+threshold = 0.001;
 ref_tr = 0.06;
 ref_br_f = 0.15;
 ref_br_r = 0.17;   
