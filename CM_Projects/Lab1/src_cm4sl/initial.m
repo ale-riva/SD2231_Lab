@@ -21,16 +21,17 @@ mu_select = 1;              % Here you can change to different friction levels
                             % CarMaker will not be realistic for snow or
                             % wet road.
 dt = 0.001;
-Kp_br_f = 1;
-Ki_br_f = 0;
-Kd_br_f = 0;
-
-Kp_br_r = 1;
-Ki_br_r = 0;
-Kd_br_r = 0;
-
-
 T = 0.039; L  = 0.052;
+Kp_br_f = 10*T/L;
+Ki_br_f = 10*T/(L^2);
+Kd_br_f = 0;%0.1 *T;
+
+Kp_br_r = 2*T/L;
+Ki_br_r = 2*T/(L^2);
+Kd_br_r = 0.1*T;
+
+
+
 Kp_tr = 4*T/L;
 Ki_tr = 4*T/(L^2);
 Kd_tr = 0.1 *T;

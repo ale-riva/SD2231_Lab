@@ -1,6 +1,6 @@
 #INFOFILE1.1 - Do not remove this line!
-TestRig.StartTime1970Str = 2023-04-05 09:58:56
-TestRig.StartTime1970 = 1680681536
+TestRig.StartTime1970Str = 2023-04-06 15:10:03
+TestRig.StartTime1970 = 1680786603
 CarMaker.Library = win64 10.2.1 #772
 CarMaker.Compiled = fh@obelix.ipg 2021-12-14 11:20:37
 CarMaker.CompileFlags:
