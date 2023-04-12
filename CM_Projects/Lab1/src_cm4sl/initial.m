@@ -5,7 +5,7 @@
 %  Date:    Spring term 2020
 %  Teacher: Mikael Nybacka and Wenliang Zhang
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+    
 clc
 close all
 clear all
@@ -24,7 +24,7 @@ dt = 0.001;
 T = 0.039; L  = 0.052;
 Kp_br_f = 10*T/L;
 Ki_br_f = 10*T/(L^2);
-Kd_br_f = 0;%0.1 *T;
+Kd_br_f = 0.1 *T;
 
 Kp_br_r = 2*T/L;
 Ki_br_r = 2*T/(L^2);
@@ -36,12 +36,16 @@ Kp_tr = 4*T/L;
 Ki_tr = 4*T/(L^2);
 Kd_tr = 0.1 *T;
 
-N = 0;
+N = 100;
 delay = 250;
-threshold = 0.001;
+
 ref_tr = 0.06;
 ref_br_f = 0.15;
-ref_br_r = 0.17;   
+ref_br_r = 0.17; 
+threshold = 0.01;
+threshold_tc = ref_tr;
+threshold_br_f = ref_br_f;
+threshold_br_r =ref_br_r;
 step_time = 2;
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Vehicle parameters DO NOT CHANGE
