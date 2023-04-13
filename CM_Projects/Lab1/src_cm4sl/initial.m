@@ -1,4 +1,4 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  KTH SD2231 - Applied Vehicle Dynamics Control
 %
 %  Lab:     1 - Slip Control for vehicles
@@ -26,9 +26,16 @@ Kp_br_f = 10*T/L;
 Ki_br_f = 10*T/(L^2);
 Kd_br_f = 0.1 *T;
 
+%final values morning 13/04
 Kp_br_r = 2*T/L;
 Ki_br_r = 2*T/(L^2);
-Kd_br_r = 0.1*T;
+Kd_br_r = 2*T;
+
+
+%final values afternoon 13/04
+% Kp_br_r = 2*T/L
+% Ki_br_r = 0.7*T/(L^2)
+% Kd_br_r = 4*T;
 
 
 
@@ -39,14 +46,17 @@ Kd_tr = 2*T;
 N = 100;
 delay = 250;
 
+
+K_awup = Ki_br_r/Kp_br_r;
 ref_tr = 0.06;
 ref_br_f = 0.15;
 ref_br_r = 0.17; 
 threshold = 0.01;
 threshold_tc = ref_tr;
-threshold_br_f = ref_br_f-0.03;
-threshold_br_r =ref_br_r-0.03;
+threshold_br_f = ref_br_f;
+threshold_br_r = ref_br_r-0.05;
 step_time = 2;
+vx_threshold = 0;
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Vehicle parameters DO NOT CHANGE
 % ______________________________________________________________________________
