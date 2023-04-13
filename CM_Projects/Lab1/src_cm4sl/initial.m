@@ -32,9 +32,9 @@ Kd_br_r = 0.1*T;
 
 
 
-Kp_tr = 4*T/L;
-Ki_tr = 4*T/(L^2);
-Kd_tr = 0.1 *T;
+Kp_tr =1*T/L;
+Ki_tr =0.4*T/(L^2);
+Kd_tr = 2*T;
 
 N = 100;
 delay = 250;
@@ -44,8 +44,8 @@ ref_br_f = 0.15;
 ref_br_r = 0.17; 
 threshold = 0.01;
 threshold_tc = ref_tr;
-threshold_br_f = ref_br_f;
-threshold_br_r =ref_br_r;
+threshold_br_f = ref_br_f-0.03;
+threshold_br_r =ref_br_r-0.03;
 step_time = 2;
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Vehicle parameters DO NOT CHANGE

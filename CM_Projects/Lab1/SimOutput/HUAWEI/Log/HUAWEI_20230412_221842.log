@@ -1,0 +1,130 @@
+APPLICATION	CarMaker 10.2.1 - Car_Generic #1267 (win64-10.2.1)
+COMPILED	fh@obelix.ipg 2021-12-14 11:20:55
+ 
+SIM_START	StartAndBrake_SD2231_Lab1	2023-04-12 22:22:40
+TIME	0.000
+SIMULATE	StartAndBrake_SD2231_Lab1
+
+TIME	9.473
+ERROR		Roll angle too high (80.25 deg)
+SIM_ABORT	StartAndBrake_SD2231_Lab1	9.475s	159.877m
+APPLICATION	CarMaker 10.2.1 - Car_Generic #1267 (win64-10.2.1)
+COMPILED	fh@obelix.ipg 2021-12-14 11:20:55
+ 
+SIM_START	StartAndBrake_SD2231_Lab1	2023-04-12 22:26:04
+TIME	0.000
+SIMULATE	StartAndBrake_SD2231_Lab1
+
+TIME	9.473
+ERROR		Roll angle too high (80.25 deg)
+SIM_ABORT	StartAndBrake_SD2231_Lab1	9.475s	159.877m
+APPLICATION	CarMaker 10.2.1 - Car_Generic #1267 (win64-10.2.1)
+COMPILED	fh@obelix.ipg 2021-12-14 11:20:55
+ 
+SIM_START	StartAndBrake_SD2231_Lab1	2023-04-12 22:27:04
+TIME	0.000
+SIMULATE	StartAndBrake_SD2231_Lab1
+
+TIME	9.473
+ERROR		Roll angle too high (80.25 deg)
+SIM_ABORT	StartAndBrake_SD2231_Lab1	9.475s	159.877m
+APPLICATION	CarMaker 10.2.1 - Car_Generic #1267 (win64-10.2.1)
+COMPILED	fh@obelix.ipg 2021-12-14 11:20:55
+ 
+SIM_START	StartAndBrake_SD2231_Lab1	2023-04-12 22:28:47
+TIME	0.000
+SIMULATE	StartAndBrake_SD2231_Lab1
+
+TIME	9.839
+ERROR		Roll angle too high (80.18 deg)
+SIM_ABORT	StartAndBrake_SD2231_Lab1	9.841s	166.744m
+APPLICATION	CarMaker 10.2.1 - Car_Generic #1267 (win64-10.2.1)
+COMPILED	fh@obelix.ipg 2021-12-14 11:20:55
+ 
+SIM_START	StartAndBrake_SD2231_Lab1	2023-04-12 22:29:21
+TIME	0.000
+SIMULATE	StartAndBrake_SD2231_Lab1
+
+TIME	9.206
+ERROR		Roll angle too high (80.30 deg)
+SIM_ABORT	StartAndBrake_SD2231_Lab1	9.208s	154.196m
+APPLICATION	CarMaker 10.2.1 - Car_Generic #1267 (win64-10.2.1)
+COMPILED	fh@obelix.ipg 2021-12-14 11:20:55
+ 
+SIM_START	StartAndBrake_SD2231_Lab1	2023-04-12 22:30:36
+TIME	0.000
+SIMULATE	StartAndBrake_SD2231_Lab1
+
+TIME	9.690
+ERROR		Roll angle too high (80.07 deg)
+SIM_ABORT	StartAndBrake_SD2231_Lab1	9.692s	161.894m
+APPLICATION	CarMaker 10.2.1 - Car_Generic #1267 (win64-10.2.1)
+COMPILED	fh@obelix.ipg 2021-12-14 11:20:55
+ 
+SIM_START	StartAndBrake_SD2231_Lab1	2023-04-12 22:31:52
+TIME	0.000
+SIMULATE	StartAndBrake_SD2231_Lab1
+
+TIME	9.176
+ERROR		Roll angle too high (80.20 deg)
+SIM_ABORT	StartAndBrake_SD2231_Lab1	9.178s	153.548m
+APPLICATION	CarMaker 10.2.1 - Car_Generic #1267 (win64-10.2.1)
+COMPILED	fh@obelix.ipg 2021-12-14 11:20:55
+ 
+SIM_START	StartAndBrake_SD2231_Lab1	2023-04-12 22:32:20
+TIME	0.000
+SIMULATE	StartAndBrake_SD2231_Lab1
+
+TIME	9.404
+ERROR		Roll angle too high (80.12 deg)
+SIM_ABORT	StartAndBrake_SD2231_Lab1	9.406s	158.06m
+APPLICATION	CarMaker 10.2.1 - Car_Generic #1267 (win64-10.2.1)
+COMPILED	fh@obelix.ipg 2021-12-14 11:20:55
+ 
+SIM_START	StartAndBrake_SD2231_Lab1	2023-04-12 22:33:02
+TIME	0.000
+SIMULATE	StartAndBrake_SD2231_Lab1
+
+TIME	9.641
+ERROR		Roll angle too high (80.17 deg)
+SIM_ABORT	StartAndBrake_SD2231_Lab1	9.643s	162.808m
+APPLICATION	CarMaker 10.2.1 - Car_Generic #1267 (win64-10.2.1)
+COMPILED	fh@obelix.ipg 2021-12-14 11:20:55
+ 
+SIM_START	StartAndBrake_SD2231_Lab1	2023-04-12 22:33:21
+TIME	0.000
+SIMULATE	StartAndBrake_SD2231_Lab1
+
+TIME	9.092
+ERROR		Roll angle too high (80.44 deg)
+SIM_ABORT	StartAndBrake_SD2231_Lab1	9.094s	151.471m
+APPLICATION	CarMaker 10.2.1 - Car_Generic #1267 (win64-10.2.1)
+COMPILED	fh@obelix.ipg 2021-12-14 11:20:55
+ 
+SIM_START	StartAndBrake_SD2231_Lab1	2023-04-12 22:33:55
+TIME	0.000
+SIMULATE	StartAndBrake_SD2231_Lab1
+
+TIME	9.301
+ERROR		Roll angle too high (80.09 deg)
+SIM_ABORT	StartAndBrake_SD2231_Lab1	9.303s	155.931m
+APPLICATION	CarMaker 10.2.1 - Car_Generic #1267 (win64-10.2.1)
+COMPILED	fh@obelix.ipg 2021-12-14 11:20:55
+ 
+SIM_START	StartAndBrake_SD2231_Lab1	2023-04-12 22:34:13
+TIME	0.000
+SIMULATE	StartAndBrake_SD2231_Lab1
+
+TIME	9.404
+ERROR		Roll angle too high (80.12 deg)
+SIM_ABORT	StartAndBrake_SD2231_Lab1	9.406s	158.06m
+APPLICATION	CarMaker 10.2.1 - Car_Generic #1267 (win64-10.2.1)
+COMPILED	fh@obelix.ipg 2021-12-14 11:20:55
+ 
+SIM_START	StartAndBrake_SD2231_Lab1	2023-04-12 22:39:14
+TIME	0.000
+SIMULATE	StartAndBrake_SD2231_Lab1
+
+TIME	9.404
+ERROR		Roll angle too high (80.12 deg)
+SIM_ABORT	StartAndBrake_SD2231_Lab1	9.406s	158.06m
