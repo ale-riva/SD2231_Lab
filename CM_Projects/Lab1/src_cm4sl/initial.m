@@ -43,18 +43,16 @@ T_new = 0.0155; L_new = 0.0475;
 
 %Ziegler-Nichols values 
 Kp_tr = 2.2*1.2*T_new/L_new;
-Ki_tr= 0.6*T_new/L_new^2;
+Ki_tr = 0.6*T_new/L_new^2;
 Kd_tr = 0.6*T_new;
 
 Kp_br_r = 1.2*T_new_rl_b/L_new_rl_b;
 Ki_br_r = 0.6*T_new_rl_b/L_new_rl_b^2;
-Kd_br_r = 2*0.6*T_new_rl_b
-
-
+Kd_br_r = 0.6*T_new_rl_b;
 
 Kp_br_f = 1.2*T_new_rl_b/L_new_rl_b;
-Ki_br_f = 0.6*T_new_rl_b/L_new_rl_b^2;
-Kd_br_f = 0.6*T_new_rl_b
+Ki_br_f = 0.5*0.6*T_new_rl_b/L_new_rl_b^2;
+Kd_br_f = 0*0.6*T_new_rl_b;
 
 
 
@@ -68,10 +66,10 @@ N = 100;
 delay = 250;
 
 
-K_awup =    Ki_br_r/Kp_br_r;
+K_awup = Ki_br_r/Kp_br_r;
 ref_tr = 0.06;
 ref_br_f = 0.15;
-ref_br_r = 0.17; 
+ref_br_r = 0.17-0.1; 
 threshold = 0.01;
 threshold_tc = ref_tr-0.02;
 threshold_br_f = ref_br_f-0.05;
