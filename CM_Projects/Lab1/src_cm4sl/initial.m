@@ -24,58 +24,80 @@ dt = 0.001;
 T = 0.039; L  = 0.052;
 T_new_rl_b = 0.287; L_new_rl_b = 0.048;
 T_new = 0.0155; L_new = 0.0475;
+low_th_zeroDiv  = 0.5;
+
+% %ZN values
+% Kp_tr = 1.2*T_new/L_new;
+% Ki_tr = 0.6*T_new/L_new^2;
+% Kd_tr = 0.6*T_new;
+% 
+% Kp_br_r = 1.2*T_new_rl_b/L_new_rl_b;
+% Ki_br_r = 0.6*T_new_rl_b/L_new_rl_b^2;
+% Kd_br_r = 0.6*T_new_rl_b;
+% 
+% Kp_br_f = 1.2*T_new_rl_b/L_new_rl_b;
+% Ki_br_f = 0.6*T_new_rl_b/L_new_rl_b^2;
+% Kd_br_f = 0.6*T_new_rl_b;
 
 
-
-%final values morning 13/04
-% Kp_br_r = 2*T/L;
-% Ki_br_r = 2*T/(L^2);
-% Kd_br_r = 2*T;
-%final values afternoon 13/04
-% Kp_br_r = 2*T/L
-% Ki_br_r = 0.7*T/(L^2);
-% Kd_br_r = 2*T
-
-% Kp_br_r = 1.2*T_new/L_new;
-% Ki_br_r= 0.6*T_new/L_new^2;
-% Kd_br_r = 0.6*T_new;
-
-
-%Ziegler-Nichols values 
-Kp_tr = 2.2*1.2*T_new/L_new;
-Ki_tr = 0.6*T_new/L_new^2;
+% %FINAL TUNING for task 3
+Kp_tr = 4*1.2*T_new/L_new;
+Ki_tr = 2*T_new/L_new^2;
 Kd_tr = 0.6*T_new;
 
 Kp_br_r = 1.2*T_new_rl_b/L_new_rl_b;
 Ki_br_r = 0.6*T_new_rl_b/L_new_rl_b^2;
 Kd_br_r = 0.6*T_new_rl_b;
 
-Kp_br_f = 1.2*T_new_rl_b/L_new_rl_b;
-Ki_br_f = 0.5*0.6*T_new_rl_b/L_new_rl_b^2;
-Kd_br_f = 0*0.6*T_new_rl_b;
+Kp_br_f = 2*1.2*T_new_rl_b/L_new_rl_b;
+Ki_br_f = 0.6*T_new_rl_b/L_new_rl_b^2;
+Kd_br_f = 0.6*T_new_rl_b;
+
+%tuning for 4a OK
+% Kp_tr = 4*1.2*T_new/L_new;
+% Ki_tr = 2*T_new/L_new^2;
+% Kd_tr = 0.6*T_new;
+% 
+% Kp_br_r = T_new_rl_b/L_new_rl_b;
+% Ki_br_r = 0.6*T_new_rl_b/L_new_rl_b^2;
+% Kd_br_r = 0*0.6*T_new_rl_b;
+% 
+% Kp_br_f = 1.2*1.2*T_new_rl_b/L_new_rl_b;
+% Ki_br_f = 1.5*0.6*T_new_rl_b/L_new_rl_b^2;
+% Kd_br_f = 0*0.6*T_new_rl_b;
 
 
+%tuning for 4b OK
+% Kp_tr = 7*1.2*T_new/L_new;
+% Ki_tr = 2*T_new/L_new^2;
+% Kd_tr = 2*0.6*T_new;
+% 
+% Kp_br_r = 1.2*T_new_rl_b/L_new_rl_b;
+% Ki_br_r = 0.6*T_new_rl_b/L_new_rl_b^2;
+% Kd_br_r = 0*0.2*0.6*T_new_rl_b;
+% 
+% Kp_br_f = 1.2*T_new_rl_b/L_new_rl_b;
+% Ki_br_f = 2*0.6*T_new_rl_b/L_new_rl_b^2;
+% Kd_br_f = 0*0.2*0.6*T_new_rl_b;
 
 
-
-% Kp_tr =1*T/L;
-% Ki_tr =0.4*T/(L^2);
-% Kd_tr = 2*T;
-
+%%
 N = 100;
-delay = 250;
+%delay = 250;
 
 
 K_awup = Ki_br_r/Kp_br_r;
 ref_tr = 0.06;
 ref_br_f = 0.15;
-ref_br_r = 0.17-0.1; 
+ref_br_r = 0.17; 
 threshold = 0.01;
 threshold_tc = ref_tr-0.02;
 threshold_br_f = ref_br_f-0.05;
 threshold_br_r = ref_br_r-0.05;
 step_time = 2;
 vx_threshold = 1;
+
+
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Vehicle parameters DO NOT CHANGE
 % ______________________________________________________________________________
@@ -184,6 +206,7 @@ out = sim('SD2231_Lab1_2022.slx')
 % Plot longitudinal slip on X-axis and used friction mu on y-axis
 
 %% Task 2c
+%slip/friction plots (obtain from simulation with controllers off)
 close all
 mu_fl = -out.FxFL./out.FzFL;
 mu_fr = -out.FxFR./out.FzFR;
@@ -266,23 +289,25 @@ str = {sprintf('Max point (%f,%f)', FL_slip(7660+idx),mu_fl(7660+idx))};
 annotation('textbox',dim,'String',str,'FitBoxToText','on');
 
 %% Ziegler-Nichols open-loop step response
-%plant is fed with a step response on Throttle/Brake in open loop
+%plant is fed with a step response  on Throttle/Brake in open loop
 
 %TRACTION
+%Throttle = unitary step at time 2
+%Brake  = zero
 clf
 figure
 slip_rl = out.RL_slip(2050:7000);
 time = out.tout(2050:7000);
 plot(time,slip_rl,'LineWidth',1)
 grid on
-d2_rl = diff(diff(out.RL_slip(2050:7002)))/dt;
-%plot(time,d2)
+%d2_rl = diff(diff(out.RL_slip(2050:7002)))/dt;
+%plot(time,d2_rl)
 hold on
 
 ds_rl=diff(slip_rl)./diff(time);
 %I = find(time == 2.085);
 d1_rl = diff(out.RL_slip(2050:7002))/dt;
-k_rl=10; % point number 10
+k_rl=32; % point number 10
 tang_rl=(time-time(k_rl))*d1_rl(k_rl)+slip_rl(k_rl);
 plot(time,tang_rl,'LineWidth',1)
 yline(max(out.RL_slip(2050:7002)),'--','LineWidth',1)
@@ -303,7 +328,9 @@ dim2 = [0.7 0.5 0.17 0.17];
 annotation('textbox',dim2,'String',str,'FitBoxToText','on');
 
 %%
-
+%Braking phase:
+%Throttle: original throttle signal
+%braking: unitary step at time 8
 clf
 figure
 slip_rl_b = out.RL_slip(7500:end-2);
@@ -335,40 +362,5 @@ dim = [0.2 0.5 0.17 0.17];
 annotation('textbox',dim,'String',str,'FitBoxToText','on');
 
 str = {sprintf('T =%f', T_new_rl_b)};
-dim2 = [0.7 0.5 0.17 0.17];
-annotation('textbox',dim2,'String',str,'FitBoxToText','on');
-%% ZN braking FL (not working)
-
-figure
-slip_fl_b = out.FL_slip(7500:end-2);
-time = out.tout(7500:end-2);
-plot(time,slip_fl_b,'LineWidth',1)
-
-
-grid on
-d2_fl_b= diff(diff(out.FL_slip(7500:end)))/dt;
-%plot(time,d2_fl_b)
-hold on
-
-ds_fl_b=diff(slip_fl_b)./diff(time);
-%I = find(time == 2.085);
-d1_fl_b = diff(out.FL_slip(7500:end))/dt;
-k_fl_b=564; % point number 10
-tang_fl_b=(time-time(k_fl_b))*d1_fl_b(k_fl_b)+slip_fl_b(k_fl_b);
-plot(time,tang_fl_b,'LineWidth',1)
-yline(max(out.FL_slip(7500:end)),'--','LineWidth',1)
-xline(7.987,'--'); xline(8.112,'--')
-legend("RL slip","tangent")
-
-ylim([-0.5 1.5]); xlim([7.95 8.15])
-xlabel("Time [s]"); ylabel("Slip")
-L_new_fl_b = 7.987 - 8;
-T_new_fl_b = 8.112-7.987;
-
-str = {sprintf('L =%f', L_new_fl_b)};
-dim = [0.2 0.5 0.17 0.17];
-annotation('textbox',dim,'String',str,'FitBoxToText','on');
-
-str = {sprintf('T =%f', T_new_fl_b)};
 dim2 = [0.7 0.5 0.17 0.17];
 annotation('textbox',dim2,'String',str,'FitBoxToText','on');

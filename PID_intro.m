@@ -52,10 +52,6 @@ subplot(2,2,4)
 plotoptions.Title.String = 'PID Controller';
 nyquistplot(PID_tf*T,plotoptions)
 
-figure
-plotoptions.Title.String = 'Open loop';
-nyquistplot(T,plotoptions);
-
 %% plot the step response of the different controllers (P,PD,PI and PID)
 KP = 0;
 KI = 0;
