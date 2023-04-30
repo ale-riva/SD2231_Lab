@@ -23,12 +23,17 @@ global lf lr Cf Cr mass Iz vbox_file_name
 %2.8 bar in all four tyres
 %Two persons in the front
 
-%vbox_file_name='S90__035.VBO';   %Standstill
+% vbox_file_name='S90__035.VBO';   %Standstill
 
+%Bad estimations for vy, need negative ay for correct sign in vy, other
+%states need positive ay directly from IMU
 vbox_file_name='S90__036.VBO';   %Circular driving to the left, radius=8m
-%vbox_file_name='S90__038.VBO';  %Slalom, v=30km/h
-%vbox_file_name='S90__040.VBO';  %Step steer to the left, v=100km/h
-%vbox_file_name='S90__041.VBO';  %Frequency sweep, v=50km/h
+%Good estimation for vy if ay is negative in measurement
+% vbox_file_name='S90__038.VBO';  %Slalom, v=30km/h
+% Okay estimation
+% vbox_file_name='S90__040.VBO';  %Step steer to the left, v=100km/h
+% Too large amplitude, need increasing Cf Cr, need negative ay
+% vbox_file_name='S90__041.VBO';  %Frequency sweep, v=50km/h
 
 
 vboload
@@ -122,7 +127,7 @@ tw=1.617;           % Track width (m)
 h_cog = 0.570;      % Height of CoG above ground
 Ratio=16.3;         % Steering gear ratio
 Cf=100000;          % Lateral stiffness front axle (N)
-Cr=100000;          % Lateral stiffness rear axle (N)
+Cr=150000;          % Lateral stiffness rear axle (N)
 Lx_relax=0.05;      % Longitudinal relaxation lenth of tyre (m)
 Ly_relax=0.15;      % Lateral relaxation lenth of tyre (m)
 Roll_res=0.01;      % Rolling resistance of tyre
@@ -154,21 +159,22 @@ Beta_VBOX       = (vy_VBOX + rx*yawRate_VBOX)./vx_VBOX;
 
 n = length(Time);
 dt = Time(2)-Time(1);
-
+%%
 %----------------------------------------------
 % SET MEASUREMENT AND PROCESS NOICE COVARIANCES
 %----------------------------------------------
 % Use as starting value 0.1 for each of the states in Q matrix
-Q=
+% Q=diag([0.1;0.3;0.1]);
+Q=diag([0.1;0.1;0.1]);
 
 % Use as starting value 0.01 for each of the measurements in R matrix
-R=
-
+% R=diag([0.002;0.3;0.002]);    %Based on the std from the measurement
+R=diag([0.01;0.01;0.01]);
 %--------------------------------------------------
 % SET INITIAL STATE AND STATE ESTIMATION COVARIANCE
 %--------------------------------------------------
-x_0=
-P_0= 
+x_0= [0.001;0;0];  %Don't set vx to zero, otherwise divison-by-zero will occur
+P_0= diag([0.1;0.3;0.1]);
 
 
 %-----------------------
@@ -189,8 +195,20 @@ meas_func_UKF = @Vehicle_measure_eq;
 disp(' ');
 disp('Filtering the signal with UKF...');
 
+x=x_0;
+P = P_0;
+x_mat = x;
 for i = 2:n
-
+     if i == 1000
+        disp("stop")
+    end
+    [x,P] = ukf_predict1(x,P,state_func_UKF,Q,SteerAngle(i));
+    meas_Y = [vx_VBOX(i);ay_VBOX(i);yawRate_VBOX(i)];
+    [x,P] = ukf_update1(x,P,meas_Y,meas_func_UKF,R,SteerAngle(i));
+    x_mat = [x_mat,x];
+%     if x(2) > 0.05
+%         disp("stop")
+%     end
 
     % ad your predict and update functions, see the scripts ukf_predict1.m
     % and ukf_update1.m
@@ -212,7 +230,8 @@ for i = 2:n
         disp(' ');
     end
 end
-
+disp('Filtering done');
+%%
 %----------------------------------------
 % CALCULATE THE SLIP ANGLE OF THE VEHICLE
 %----------------------------------------
@@ -221,13 +240,19 @@ end
 %---------------------------------------------------------
 % CALCULATE THE ERROR VALES FOR THE ESTIMATE OF SLIP ANGLE
 %---------------------------------------------------------
-Beta_VBOX_smooth=smooth(Beta_VBOX,0.01,'rlowess'); 
-[e_beta_mean,e_beta_max,time_at_max,error] = errorCalc(YOUR BETA',Beta_VBOX_smooth);
-disp(' ');
-fprintf('The MSE of Beta estimation is: %d \n',e_beta_mean);
-fprintf('The Max error of Beta estimation is: %d \n',e_beta_max);
+% Beta_VBOX_smooth=smooth(Beta_VBOX,0.01,'rlowess'); 
+% [e_beta_mean,e_beta_max,time_at_max,error] = errorCalc(YOUR BETA',Beta_VBOX_smooth);
+% disp(' ');
+% fprintf('The MSE of Beta estimation is: %d \n',e_beta_mean);
+% fprintf('The Max error of Beta estimation is: %d \n',e_beta_max);
 
 %-----------------
 % PLOT THE RESULTS
 %-----------------
-
+subplot(2,1,1)
+plot(vx_VBOX)
+hold on
+plot(x_mat(1,:))
+% ylim([-1,1])
+subplot(2,1,2)
+plot(SteerAngle)
