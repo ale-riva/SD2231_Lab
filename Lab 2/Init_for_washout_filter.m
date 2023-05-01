@@ -27,8 +27,8 @@ global vbox_file_name
 
 %vbox_file_name='S90__036.VBO';   %Circular driving to the left, radius=8m
 %vbox_file_name='S90__038.VBO';   %Slalom, v=30km/h
-vbox_file_name='S90__040.VBO';  %Step steer to the left, v=100km/h
-%vbox_file_name='S90__041.VBO';  %Frequency sweep, v=50km/h
+%vbox_file_name='S90__040.VBO';  %Step steer to the left, v=100km/h
+vbox_file_name='S90__041.VBO';  %Frequency sweep, v=50km/h
 
 
 vboload
@@ -177,7 +177,6 @@ Beta_VBOX       = [Time,(vy_VBOX(:,2) + rx*yawRate_VBOX(:,2))./vx_VBOX(:,2)];
 %%
 T = 0.8;   %Weight for model vs integral
 mdl = 'washout_filter_sim_2020';
-disp(sprintf("Time start %f",string(Time(1000))))
-disp(sprintf("Time start %f",string(Time(end-400))))
-set_param(mdl,"StartTime",string(Time(1000)),"StopTime",string(Time(end-400)))
- 
+disp(sprintf("Time start %f",string(Time(1001))))
+disp(sprintf("Time end %f",string(Time(end-400))))
+set_param(mdl,"StartTime",string(Time(1001)),"StopTime",string(Time(end-400)))

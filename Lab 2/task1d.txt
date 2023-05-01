@@ -1,0 +1,29 @@
+
+
+ simulation: sim1
+time_start index: 1001.000000
+Error mean for the model: 5.158682e-04
+Error mean for the kinetic: 3.171949e-03
+Error mean for the wasah-out(T: 0.800000): 3.451787e-04
+
+
+ simulation: sim2
+time_start index: 1001.000000
+Error mean for the model: 1.371031e-06
+Error mean for the kinetic: 6.661750e-02
+Error mean for the wasah-out(T: 0.800000): 5.199339e-04
+
+
+
+ simulation: sim3
+time_start index: 1001.000000
+Error mean for the model: 9.297235e-03
+Error mean for the kinetic: 4.575861e-04
+Error mean for the wasah-out(T: 0.800000): 5.780031e-03
+
+
+ simulation: sim4
+time_start index: 1001.000000
+Error mean for the model: 4.660329e-05
+Error mean for the kinetic: 5.081738e-02
+Error mean for the wasah-out(T: 0.800000): 2.504416e-04
