@@ -25,10 +25,10 @@ global vbox_file_name
 
 %vbox_file_name='S90__035.VBO';   %Standstill
 
-% vbox_file_name='S90__036.VBO';   %Circular driving to the left, radius=8m
-% vbox_file_name='S90__038.VBO';  %Slalom, v=30km/h
-% vbox_file_name='S90__040.VBO';  %Step steer to the left, v=100km/h
-vbox_file_name='S90__041.VBO';  %Frequency sweep, v=50km/h
+%vbox_file_name='S90__036.VBO';   %Circular driving to the left, radius=8m
+%vbox_file_name='S90__038.VBO';   %Slalom, v=30km/h
+vbox_file_name='S90__040.VBO';  %Step steer to the left, v=100km/h
+%vbox_file_name='S90__041.VBO';  %Frequency sweep, v=50km/h
 
 
 vboload
@@ -151,6 +151,9 @@ rx=0.29;            % distance from CoG to IMU x-axle
 ry=0;               % distance from CoG to IMU y-axle
 rz=0;               % distance from CoG to IMU z-axle
 
+%Tuning of Cf,Cr is done to make Beta_mod close to real Beta
+%for small values
+
 Ts = 0.01;
 
 %--------------------------------------
@@ -171,9 +174,10 @@ SteerAngle      = [Time,vbo.channels(1, 39).data./Ratio];
 ax_VBOX         = [Time,vbo.channels(1, 57).data.*g];
 ay_VBOX         = [Time,vbo.channels(1, 58).data.*g];
 Beta_VBOX       = [Time,(vy_VBOX(:,2) + rx*yawRate_VBOX(:,2))./vx_VBOX(:,2)];
-
-T = 0.01;   %Weight for model vs integral
-mdl = 'washout_filter_sim';
+%%
+T = 0.8;   %Weight for model vs integral
+mdl = 'washout_filter_sim_2020';
 disp(sprintf("Time start %f",string(Time(1000))))
 disp(sprintf("Time start %f",string(Time(end-400))))
 set_param(mdl,"StartTime",string(Time(1000)),"StopTime",string(Time(end-400)))
+ 

@@ -60,13 +60,37 @@ time_trim = Time(1000:end-500)-Time(1000);
 % v2 = Beta_VBOX(1000:(1000+length(out.Betay_mod.Data)-1),2);
 % disp(length(v1))
 % disp(length(v2))
+Beta_VBOX_smooth=smooth(Beta_VBOX,0.01,'rlowess');
+
+sim = "sim1";
+
+% start_time_index = 1000;
+% beta_start = 4;
+% [error_mean_mod,error_max_mod,time_at_max_mod,~] = errorCalc(out.Betay_mod.Data,Beta_VBOX(start_time_index:(start_time_index+length(out.Betay_mod.Data)-1),2));
+% disp(sprintf("Error mean for the model: %e",error_mean_mod))
+% [error_mean_kin,error_max_kin,time_at_max_kin,~] = errorCalc(out.Betay_kin.Data(beta_start:end),Beta_VBOX(start_time_index:(start_time_index+length(out.Betay_kin.Data(beta_start:end))-1),2));
+% disp(sprintf("Error mean with the kinetic: %e",error_mean_kin))
+% [error_mean_wo,error_max_wo,time_at_max_wo,~] = errorCalc(out.Betay_wf.Data(beta_start:end),Beta_VBOX(start_time_index:(start_time_index+length(out.Betay_kin.Data(beta_start:end))-1),2));
+% disp(sprintf("Error mean for the washout: %e",error_mean_wo))
+
 
 
 start_time_index = 1000;
 beta_start = 4;
-[error_mean,error_max,time_at_max,~] = errorCalc(out.Betay_mod.Data,Beta_VBOX(start_time_index:(start_time_index+length(out.Betay_mod.Data)-1),2));
-disp(sprintf("Error mean for the model: %e",error_mean))
-[error_mean,error_max,time_at_max,~] = errorCalc(out.Betay_kin.Data(beta_start:end),Beta_VBOX(start_time_index:(start_time_index+length(out.Betay_kin.Data(beta_start:end))-1),2));
-disp(sprintf("Error mean with the kinetic: %e",error_mean))
-[error_mean,error_max,time_at_max,~] = errorCalc(out.Betay_wf.Data(beta_start:end),Beta_VBOX(start_time_index:(start_time_index+length(out.Betay_kin.Data(beta_start:end))-1),2));
-disp(sprintf("Error mean for the washout: %e",error_mean))
+[error_mean_mod,error_max_mod,time_at_max_mod,~] = errorCalc(out.Betay_mod.Data,Beta_VBOX(start_time_index:(start_time_index+length(out.Betay_mod.Data)-1),2));
+disp(sprintf("Error mean for the model: %e",error_mean_mod))
+[error_mean_kin,error_max_kin,time_at_max_kin,~] = errorCalc(out.Betay_kin.Data(beta_start:end),Beta_VBOX(start_time_index:(start_time_index+length(out.Betay_kin.Data(beta_start:end))-1),2));
+disp(sprintf("Error mean with the kinetic: %e",error_mean_kin))
+[error_mean_wo,error_max_wo,time_at_max_wo,~] = errorCalc(out.Betay_wf.Data(beta_start:end),Beta_VBOX(start_time_index:(start_time_index+length(out.Betay_kin.Data(beta_start:end))-1),2));
+disp(sprintf("Error mean for the washout: %e",error_mean_wo))
+
+%saving values to txt file
+fileID = fopen('task1d.txt','a');
+fprintf(fileID,"\n\n simulation: %s\n",sim)
+fprintf(fileID,"time_start index: %f\n",start_time_index)
+fprintf(fileID,"Error mean for the model: %e\n",error_mean_mod)
+fprintf(fileID,"Error mean for the kinetic: %e\n",error_mean_kin)
+fprintf(fileID,"Error mean for the wasah-out(T: %f): %e\n",T,error_mean_wo)
+fclose(fileID);
+
+
