@@ -8,10 +8,11 @@ global lf lr mass Cf Cr
 vx = x(1);
 vy = x(2);
 yawrate = x(3);
-% disp(size(x))
 
-F12 = -Cf*atan((vy+yawrate*lf)/vx)-delta;
-F34 = -Cr*atan((vy-yawrate*lr)/vx);
+alpha12 = atan((vy+yawrate*lf)/vx)-delta;
+alpha34 = atan((vy-yawrate*lr)/vx);
+F12 = -Cf*alpha12;
+F34 = -Cr*alpha34;
 
 ay = (F34+F12*cos(delta))/(mass);
 y_n = [vx;ay;yawrate];

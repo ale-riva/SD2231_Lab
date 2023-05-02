@@ -25,15 +25,14 @@ global lf lr Cf Cr mass Iz vbox_file_name
 
 % vbox_file_name='S90__035.VBO';   %Standstill
 
-%Bad estimations for vy, need negative ay for correct sign in vy, other
-%states need positive ay directly from IMU
-vbox_file_name='S90__036.VBO';   %Circular driving to the left, radius=8m
-%Good estimation for vy if ay is negative in measurement
+%Need smoothing to get good plot
+% vbox_file_name='S90__036.VBO';   %Circular driving to the left, radius=8m
+%Good estimation
 % vbox_file_name='S90__038.VBO';  %Slalom, v=30km/h
-% Okay estimation
+% Need smooting but will not go down all the way
 % vbox_file_name='S90__040.VBO';  %Step steer to the left, v=100km/h
 % Too large amplitude, need increasing Cf Cr, need negative ay
-% vbox_file_name='S90__041.VBO';  %Frequency sweep, v=50km/h
+vbox_file_name='S90__041.VBO';  %Frequency sweep, v=50km/h
 
 
 vboload
@@ -114,6 +113,7 @@ vboload
 %  Channel 75 = lat_jerk
 %  Channel 76 = head_imu2
 
+%%
 %-----------------------------------
 % SET VEHICLE DATA FOR THE VOLVO S90
 %-----------------------------------
@@ -126,8 +126,8 @@ Iz=3089;            % Yaw inertia (kg-m2)
 tw=1.617;           % Track width (m)
 h_cog = 0.570;      % Height of CoG above ground
 Ratio=16.3;         % Steering gear ratio
-Cf=100000;          % Lateral stiffness front axle (N)
-Cr=150000;          % Lateral stiffness rear axle (N)
+Cf=170000;          % Lateral stiffness front axle (N)
+Cr=210000;          % Lateral stiffness rear axle (N)
 Lx_relax=0.05;      % Longitudinal relaxation lenth of tyre (m)
 Ly_relax=0.15;      % Lateral relaxation lenth of tyre (m)
 Roll_res=0.01;      % Rolling resistance of tyre
@@ -165,7 +165,7 @@ dt = Time(2)-Time(1);
 %----------------------------------------------
 % Use as starting value 0.1 for each of the states in Q matrix
 % Q=diag([0.1;0.3;0.1]);
-Q=diag([0.1;0.1;0.1]);
+Q=diag([0.01;0.01;0.01]);
 
 % Use as starting value 0.01 for each of the measurements in R matrix
 % R=diag([0.002;0.3;0.002]);    %Based on the std from the measurement
@@ -174,7 +174,7 @@ R=diag([0.01;0.01;0.01]);
 % SET INITIAL STATE AND STATE ESTIMATION COVARIANCE
 %--------------------------------------------------
 x_0= [0.001;0;0];  %Don't set vx to zero, otherwise divison-by-zero will occur
-P_0= diag([0.1;0.3;0.1]);
+P_0= diag([0.01;0.01;0.01]);
 
 
 %-----------------------
@@ -199,11 +199,12 @@ x=x_0;
 P = P_0;
 x_mat = x;
 for i = 2:n
-     if i == 1000
-        disp("stop")
-    end
+%      if i == 1000
+%         disp("stop")
+%     end
     [x,P] = ukf_predict1(x,P,state_func_UKF,Q,SteerAngle(i));
-    meas_Y = [vx_VBOX(i);ay_VBOX(i);yawRate_VBOX(i)];
+
+    meas_Y = [vx_VBOX(i);ay_VBOX(i)+rx*(yawRate_VBOX(i)-yawRate_VBOX(i-1))/dt;yawRate_VBOX(i)];
     [x,P] = ukf_update1(x,P,meas_Y,meas_func_UKF,R,SteerAngle(i));
     x_mat = [x_mat,x];
 %     if x(2) > 0.05
@@ -236,12 +237,12 @@ disp('Filtering done');
 % CALCULATE THE SLIP ANGLE OF THE VEHICLE
 %----------------------------------------
 
-
+Beta_vy = atan(x_mat(2,:)./x_mat(1,:));
 %---------------------------------------------------------
 % CALCULATE THE ERROR VALES FOR THE ESTIMATE OF SLIP ANGLE
 %---------------------------------------------------------
 % Beta_VBOX_smooth=smooth(Beta_VBOX,0.01,'rlowess'); 
-% [e_beta_mean,e_beta_max,time_at_max,error] = errorCalc(YOUR BETA',Beta_VBOX_smooth);
+% [e_beta_mean,e_beta_max,time_at_max,error] = errorCalc(Beta_vy,Beta_VBOX_smooth);
 % disp(' ');
 % fprintf('The MSE of Beta estimation is: %d \n',e_beta_mean);
 % fprintf('The Max error of Beta estimation is: %d \n',e_beta_max);
@@ -249,10 +250,26 @@ disp('Filtering done');
 %-----------------
 % PLOT THE RESULTS
 %-----------------
-subplot(2,1,1)
-plot(vx_VBOX)
+clf
+subplot(2,2,1)
+plot(Time,vx_VBOX)
 hold on
-plot(x_mat(1,:))
-% ylim([-1,1])
-subplot(2,1,2)
-plot(SteerAngle)
+plot(Time,x_mat(1,:))
+title("vx velocity")
+subplot(2,2,2)
+plot(Time,vy_VBOX)
+hold on
+plot(Time,x_mat(2,:))
+title("vy velocity")
+ylim([-1,1])
+subplot(2,2,3)
+plot(Time,yawRate_VBOX)
+hold on
+plot(Time,x_mat(3,:))
+title("yawrate")
+subplot(2,2,4)
+plot(Time,smooth(Beta_VBOX))
+hold on
+plot(Time,smooth(Beta_vy))
+title("Side slip")
+ylim([-0.1,0.1])
