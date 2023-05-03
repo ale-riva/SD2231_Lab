@@ -205,6 +205,25 @@ out = sim(mdl);
 % plot(ax_VBOX(1001:end-400,1),ax_VBOX_smooth)
 % legend("non","filt")
 
+%%
+% figure(2)
+% plot(Time(800:end-300),Beta_VBOX(800:end-300,2),'LineWidth',2)
+% hold on
+% plot(Time(800:end-300),out.Betay_mod.Data,'LineWidth',2)
+% hold on
+% plot(Time(800:end-300),out.Betay_kin.Data,'LineWidth',2)
+% hold on
+% plot(Time(800:end-300),out.Betay_wf.Data,'LineWidth',2)
+% hold on
+% plot(Time(800:end-300),out.Betay_wf_var.Data,'LineWidth',2)
+% title("Side slip, sim 3")
+% legend("VBOX","Model","Kinetic","WF, fixed T","WF, var T")
+% xlim([Time(800),Time(end-300)])
+% ylim([-0.3,0.3])
+% xlabel("Time")
+% ylabel("Slip amplitude")
+% grid on
+
 %% Cornering stiffness estimation with betaless method
 % ay = ay_VBOX(:,2);
 % yawRate = yawRate_VBOX(:,2);
