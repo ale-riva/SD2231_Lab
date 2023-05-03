@@ -175,7 +175,7 @@ ax_VBOX         = [Time,vbo.channels(1, 57).data.*g];
 ay_VBOX         = [Time,vbo.channels(1, 58).data.*g];
 Beta_VBOX       = [Time,(vy_VBOX(:,2) + rx*yawRate_VBOX(:,2))./vx_VBOX(:,2)];
 %%
-T = 0.1;   %Weight for model vs integral
+T = 0.8;   %Weight for model vs integral
 mdl = 'washout_filter_sim_2020';
 disp(sprintf("Time start %f",string(Time(1001))))
 disp(sprintf("Time end %f",string(Time(end-400))))
