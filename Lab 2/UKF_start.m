@@ -28,11 +28,11 @@ global lf lr Cf Cr mass Iz vbox_file_name
 %Need smoothing to get good plot
 % vbox_file_name='S90__036.VBO';   %Circular driving to the left, radius=8m
 %Good estimation
-% vbox_file_name='S90__038.VBO';  %Slalom, v=30km/h
+vbox_file_name='S90__038.VBO';  %Slalom, v=30km/h
 % Need smooting but will not go down all the way
 % vbox_file_name='S90__040.VBO';  %Step steer to the left, v=100km/h
 % Too large amplitude, need increasing Cf Cr, need negative ay
-vbox_file_name='S90__041.VBO';  %Frequency sweep, v=50km/h
+% vbox_file_name='S90__041.VBO';  %Frequency sweep, v=50km/h
 
 
 vboload
@@ -126,8 +126,8 @@ Iz=3089;            % Yaw inertia (kg-m2)
 tw=1.617;           % Track width (m)
 h_cog = 0.570;      % Height of CoG above ground
 Ratio=16.3;         % Steering gear ratio
-Cf=170000;          % Lateral stiffness front axle (N)
-Cr=210000;          % Lateral stiffness rear axle (N)
+Cf=100000;          % Lateral stiffness front axle (N)
+Cr=100000;          % Lateral stiffness rear axle (N)
 Lx_relax=0.05;      % Longitudinal relaxation lenth of tyre (m)
 Ly_relax=0.15;      % Lateral relaxation lenth of tyre (m)
 Roll_res=0.01;      % Rolling resistance of tyre
@@ -165,7 +165,7 @@ dt = Time(2)-Time(1);
 %----------------------------------------------
 % Use as starting value 0.1 for each of the states in Q matrix
 % Q=diag([0.1;0.3;0.1]);
-Q=diag([0.01;0.01;0.01]);
+Q=diag([0.1;0.1;0.1]);
 
 % Use as starting value 0.01 for each of the measurements in R matrix
 % R=diag([0.002;0.3;0.002]);    %Based on the std from the measurement
@@ -272,4 +272,4 @@ plot(Time,smooth(Beta_VBOX))
 hold on
 plot(Time,smooth(Beta_vy))
 title("Side slip")
-ylim([-0.1,0.1])
+ylim([-0.1,0.3])
