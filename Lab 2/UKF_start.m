@@ -166,18 +166,17 @@ dt = Time(2)-Time(1);
 % Use as starting value 0.1 for each of the states in Q matrix
 % Q=diag([0.1;0.3;0.1]);
 Q=diag([0.1;0.1;0.1]);
-% Q=diag([0.35;0.4;0.1]);
+% Q=diag([0.04;0.07;0.03]); % Better result, from std of sim1. Final tune
 
 % Use as starting value 0.01 for each of the measurements in R matrix
 % R=diag([0.002;0.3;0.002]);    %Based on the std from the measurement
-R=diag([0.01;0.01;0.01]);
-% R=diag([0.01;0.05;0.01]);
+R=diag([0.01,0.01,0.01]);
+% R=diag([2.8;0.2;0.08]); % Better result, from std of sim1. Final tune
 %--------------------------------------------------
 % SET INITIAL STATE AND STATE ESTIMATION COVARIANCE
 %--------------------------------------------------
 x_0= [0.01;0;0];  %Don't set vx to zero, otherwise divison-by-zero will occur
-P_0= diag([0.001;0.008;0.001]);
-% P_0 = diag([0.005;0.05;0.05]);
+P_0= diag([0.01;0.1;0.1]);
 
 
 %-----------------------
@@ -202,17 +201,11 @@ x=x_0;
 P = P_0;
 x_mat = x;
 for i = 2:n
-%      if i == 1000
-%         disp("stop")
-%     end
     [x,P] = ukf_predict1(x,P,state_func_UKF,Q,SteerAngle(i),0.8,2,0); %Alpha 0.8, Beta 2, kappa 0
 
     meas_Y = [vx_VBOX(i);ay_VBOX(i)+rx*(yawRate_VBOX(i)-yawRate_VBOX(i-1))/dt;yawRate_VBOX(i)];
     [x,P] = ukf_update1(x,P,meas_Y,meas_func_UKF,R,SteerAngle(i),0.8,2,0);
     x_mat = [x_mat,x];
-%     if x(2) > 0.05
-%         disp("stop")
-%     end
 
     % ad your predict and update functions, see the scripts ukf_predict1.m
     % and ukf_update1.m
@@ -244,16 +237,17 @@ Beta_vy = atan(x_mat(2,:)./x_mat(1,:));
 %---------------------------------------------------------
 % CALCULATE THE ERROR VALES FOR THE ESTIMATE OF SLIP ANGLE
 %---------------------------------------------------------
-% Beta_VBOX_smooth=smooth(Beta_VBOX,0.01,'rlowess'); 
-% [e_beta_mean,e_beta_max,time_at_max,error] = errorCalc(Beta_vy,Beta_VBOX_smooth);
-% disp(' ');
-% fprintf('The MSE of Beta estimation is: %d \n',e_beta_mean);
-% fprintf('The Max error of Beta estimation is: %d \n',e_beta_max);
+Beta_VBOX_smooth=smooth(Beta_VBOX(1700:2152),0.01,'rlowess'); 
+[e_beta_mean,e_beta_max,time_at_max,error] = errorCalc(Beta_vy(1700:2152),Beta_VBOX_smooth);
+disp(' ');
+fprintf('The MSE of Beta estimation is: %d \n',e_beta_mean);
+fprintf('The Max error of Beta estimation is: %d \n',max(e_beta_max));
 
 %-----------------
 % PLOT THE RESULTS
 %-----------------
 clf
+figure(1)
 subplot(2,2,1)
 plot(Time,vx_VBOX)
 hold on
@@ -279,14 +273,22 @@ ylim([-0.1,0.3])
 disp("Plotting coming")
 
 % figure(2)
-% plot(Time,Beta_VBOX,'LineWidth',2)
+% plot(Time,Beta_VBOX,'LineWidth',1)
 % hold on
-% plot(Time,smooth(Beta_vy),'LineWidth',2)
+% plot(Time,smooth(Beta_vy),'LineWidth',1)
 % hold on
-% plot(Time(800:end-300),out.Betay_wf.Data,'LineWidth',1,'Color','g')
-% title("Side slip")
-% legend("VBOX","UKF","Washout filter")
+% plot(Time(800:end-300),out.Betay_mod.Data,'LineWidth',1)
+% hold on
+% plot(Time(800:end-300),out.Betay_kin.Data,'LineWidth',1)
+% hold on
+% plot(Time(800:end-300),out.Betay_wf.Data,'LineWidth',1)
+% hold on
+% plot(Time(800:end-300),out.Betay_wf_var.Data,'LineWidth',1,'Color','g')
+% title("Side slip, sim 4")
+% legend("VBOX","UKF", "Model","Kinetic","WF, fixed T","WF, var T")
+% % legend("VBOX","UKF","WF, var T")
 % xlim([Time(800),Time(end-300)])
 % ylim([-0.05,0.1])
 % xlabel("Time")
 % ylabel("Slip amplitude")
+% grid on
