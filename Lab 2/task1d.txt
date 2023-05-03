@@ -1,29 +1,24 @@
 
 
  simulation: sim1
-time_start index: 1001.000000
-Error mean for the model: 5.158682e-04
-Error mean for the kinetic: 3.171949e-03
-Error mean for the wasah-out(T: 0.800000): 3.451787e-04
+MOD: MSE=5.772549e-04; MAX=9.365501e-02
+KYN: MSE=3.689324e-03; MAX=1.681227e-01
+WF(T:0.100000): MSE=5.480120e-04; MAX=9.061331e-02
 
 
  simulation: sim2
-time_start index: 1001.000000
-Error mean for the model: 1.371031e-06
-Error mean for the kinetic: 6.661750e-02
-Error mean for the wasah-out(T: 0.800000): 5.199339e-04
-
-
-
- simulation: sim3
-time_start index: 1001.000000
-Error mean for the model: 9.297235e-03
-Error mean for the kinetic: 4.575861e-04
-Error mean for the wasah-out(T: 0.800000): 5.780031e-03
+MOD: MSE=1.371031e-06; MAX=3.408570e-03
+KYN: MSE=6.661750e-02; MAX=4.651379e-01
+WF(T:0.100000): MSE=7.078543e-06; MAX=4.675094e-03
 
 
  simulation: sim4
-time_start index: 1001.000000
-Error mean for the model: 4.660329e-05
-Error mean for the kinetic: 5.081738e-02
-Error mean for the wasah-out(T: 0.800000): 2.504416e-04
+MOD: MSE=9.297235e-03; MAX=1.538066e-01
+KYN: MSE=4.575861e-04; MAX=5.976902e-02
+WF(T:0.100000): MSE=9.120768e-03; MAX=1.546240e-01
+
+
+ simulation: sim4
+MOD: MSE=4.660329e-05; MAX=2.381742e-02
+KYN: MSE=5.081738e-02; MAX=3.563752e-01
+WF(T:0.100000): MSE=1.172515e-04; MAX=3.953015e-02
