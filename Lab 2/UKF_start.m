@@ -26,9 +26,9 @@ global lf lr Cf Cr mass Iz vbox_file_name
 % vbox_file_name='S90__035.VBO';   %Standstill
 
 %Need smoothing to get good plot
-% vbox_file_name='S90__036.VBO';   %Circular driving to the left, radius=8m
+vbox_file_name='S90__036.VBO';   %Circular driving to the left, radius=8m
 %Good estimation
-vbox_file_name='S90__038.VBO';  %Slalom, v=30km/h
+% vbox_file_name='S90__038.VBO';  %Slalom, v=30km/h
 % Need smooting but will not go down all the way
 % vbox_file_name='S90__040.VBO';  %Step steer to the left, v=100km/h
 % Too large amplitude, need increasing Cf Cr, need negative ay
@@ -126,8 +126,8 @@ Iz=3089;            % Yaw inertia (kg-m2)
 tw=1.617;           % Track width (m)
 h_cog = 0.570;      % Height of CoG above ground
 Ratio=16.3;         % Steering gear ratio
-Cf=100000;          % Lateral stiffness front axle (N)
-Cr=100000;          % Lateral stiffness rear axle (N)
+Cf=200000;          % Lateral stiffness front axle (N)
+Cr=250000;          % Lateral stiffness rear axle (N)
 Lx_relax=0.05;      % Longitudinal relaxation lenth of tyre (m)
 Ly_relax=0.15;      % Lateral relaxation lenth of tyre (m)
 Roll_res=0.01;      % Rolling resistance of tyre
@@ -166,15 +166,18 @@ dt = Time(2)-Time(1);
 % Use as starting value 0.1 for each of the states in Q matrix
 % Q=diag([0.1;0.3;0.1]);
 Q=diag([0.1;0.1;0.1]);
+% Q=diag([0.35;0.4;0.1]);
 
 % Use as starting value 0.01 for each of the measurements in R matrix
 % R=diag([0.002;0.3;0.002]);    %Based on the std from the measurement
 R=diag([0.01;0.01;0.01]);
+% R=diag([0.01;0.05;0.01]);
 %--------------------------------------------------
 % SET INITIAL STATE AND STATE ESTIMATION COVARIANCE
 %--------------------------------------------------
-x_0= [0.001;0;0];  %Don't set vx to zero, otherwise divison-by-zero will occur
-P_0= diag([0.01;0.01;0.01]);
+x_0= [0.01;0;0];  %Don't set vx to zero, otherwise divison-by-zero will occur
+P_0= diag([0.001;0.008;0.001]);
+% P_0 = diag([0.005;0.05;0.05]);
 
 
 %-----------------------
@@ -202,10 +205,10 @@ for i = 2:n
 %      if i == 1000
 %         disp("stop")
 %     end
-    [x,P] = ukf_predict1(x,P,state_func_UKF,Q,SteerAngle(i));
+    [x,P] = ukf_predict1(x,P,state_func_UKF,Q,SteerAngle(i),0.8,2,0); %Alpha 0.8, Beta 2, kappa 0
 
     meas_Y = [vx_VBOX(i);ay_VBOX(i)+rx*(yawRate_VBOX(i)-yawRate_VBOX(i-1))/dt;yawRate_VBOX(i)];
-    [x,P] = ukf_update1(x,P,meas_Y,meas_func_UKF,R,SteerAngle(i));
+    [x,P] = ukf_update1(x,P,meas_Y,meas_func_UKF,R,SteerAngle(i),0.8,2,0);
     x_mat = [x_mat,x];
 %     if x(2) > 0.05
 %         disp("stop")
@@ -257,9 +260,9 @@ hold on
 plot(Time,x_mat(1,:))
 title("vx velocity")
 subplot(2,2,2)
-plot(Time,vy_VBOX)
+plot(Time,smooth(vy_VBOX))
 hold on
-plot(Time,x_mat(2,:))
+plot(Time,smooth(x_mat(2,:)))
 title("vy velocity")
 ylim([-1,1])
 subplot(2,2,3)
@@ -273,3 +276,4 @@ hold on
 plot(Time,smooth(Beta_vy))
 title("Side slip")
 ylim([-0.1,0.3])
+disp("Plotting coming")
