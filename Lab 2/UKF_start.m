@@ -277,3 +277,16 @@ plot(Time,smooth(Beta_vy))
 title("Side slip")
 ylim([-0.1,0.3])
 disp("Plotting coming")
+
+% figure(2)
+% plot(Time,Beta_VBOX,'LineWidth',2)
+% hold on
+% plot(Time,smooth(Beta_vy),'LineWidth',2)
+% hold on
+% plot(Time(800:end-300),out.Betay_wf.Data,'LineWidth',1,'Color','g')
+% title("Side slip")
+% legend("VBOX","UKF","Washout filter")
+% xlim([Time(800),Time(end-300)])
+% ylim([-0.05,0.1])
+% xlabel("Time")
+% ylabel("Slip amplitude")
