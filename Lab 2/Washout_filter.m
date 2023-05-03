@@ -79,7 +79,7 @@ start_time_index = 1001;
 time_start = Time(start_time_index);
 
 
-sim1 = [4 33.75];
+sim1 = [4 37.28];
 sim2 = [5.5 21.78];
 sim3 = [7 11.510];
 sim4 = [0 27.23];
@@ -92,7 +92,7 @@ switch vbox_file_name
         sim_txt = "sim2";
         sim_ok = sim2;
     case 'S90__040.VBO'
-        sim_txt = "sim4";
+        sim_txt = "sim3";
         sim_ok = sim3;
     case 'S90__041.VBO'
         sim_txt = "sim4";
@@ -137,6 +137,7 @@ fprintf(fileID,"\n\n simulation: %s\n",sim_txt)
 fprintf(fileID,"MOD: MSE=%e; MAX=%e\n",error_mean_mod,error_max_mod)
 fprintf(fileID,"KYN: MSE=%e; MAX=%e\n",error_mean_kin,error_max_kin)
 fprintf(fileID,"WF(T:%f): MSE=%e; MAX=%e\n",T,error_mean_wf,error_max_wf)
+fprintf(fileID,"WF(T var): MSE=%e; MAX=%e\n",error_mean_wf_var,error_max_wf_var)
 fclose(fileID);
 
 
