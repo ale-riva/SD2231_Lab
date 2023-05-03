@@ -25,10 +25,10 @@ global vbox_file_name
 
 %vbox_file_name='S90__035.VBO';   %Standstill
 
-%vbox_file_name='S90__036.VBO';   %Circular driving to the left, radius=8m
+vbox_file_name='S90__036.VBO';   %Circular driving to the left, radius=8m
 %vbox_file_name='S90__038.VBO';   %Slalom, v=30km/h
 %vbox_file_name='S90__040.VBO';   %Step steer to the left, v=100km/h
-vbox_file_name='S90__041.VBO';   %Frequency sweep, v=50km/h
+%vbox_file_name='S90__041.VBO';   %Frequency sweep, v=50km/h
 
 
 vboload
@@ -141,8 +141,8 @@ Iz=3089;            % Yaw inertia (kg-m2)
 tw=1.617;           % Track width (m)
 h_cog = 0.570;      % Height of CoG above ground
 Ratio=16.3;         % Steering gear ratio
-Cf=200000;          % Lateral stiffness front axle (N)
-Cr=250000;          % Lateral stiffness rear axle (N)
+Cf=150000;          % Lateral stiffness front axle (N)
+Cr=170000;          % Lateral stiffness rear axle (N)
 Lx_relax=0.05;      % Longitudinal relaxation lenth of tyre (m)
 Ly_relax=0.15;      % Lateral relaxation lenth of tyre (m)
 Roll_res=0.01;      % Rolling resistance of tyre
@@ -184,7 +184,9 @@ set_param(mdl,"StartTime",string(Time(1001)),"StopTime",string(Time(end-400)))
 ay_VBOX_smooth=smooth(ay_VBOX(:,2),0.05,'rlowess');
 ax_VBOX_smooth=smooth(ax_VBOX(:,2),0.1,'rlowess');
 %ax_VBOX_smooth2=smooth(ax_VBOX(:,2),0.01,'rlowess');
-T_var = 2*abs(ax_VBOX_smooth)+0.01;
+%T_var = 2*abs(ax_VBOX_smooth)+0.01;
+
+%der_yaw_rate = 
 % figure
 % plot(ax_VBOX(:,1),ax_VBOX_smooth)
 % hold on
@@ -192,9 +194,9 @@ T_var = 2*abs(ax_VBOX_smooth)+0.01;
 
 
 %T_var = 0.05*abs(ay_VBOX_smooth)+1.5*abs(ax_VBOX_smooth);
-arr_ind = 1:1:size(Time,1);
-figure
-plot(ax_VBOX(1001:end-400,1),T_var(1001:end-400))
+% arr_ind = 1:1:size(Time,1);
+% figure
+% plot(ax_VBOX(1001:end-400,1),T_var(1001:end-400))
 
 % figure
 % plot(ax_VBOX(1001:end-400,1),ax_VBOX(1001:end-400,2))
