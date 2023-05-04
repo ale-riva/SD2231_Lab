@@ -3,7 +3,7 @@
 % Following file is the start file for the state estimation using
 % Uncented Kalman Filter (UKF).
 %----------------------------------------------------------------
-clear all;
+% clear all;
 close all;
 clc;
 addpath('scripts')
@@ -12,7 +12,7 @@ disp(' ');
 
 % Set global variables so that they can be accessed from other matlab
 % functions and files
-global lf lr Cf Cr mass Iz vbox_file_name
+global lf lr Ly_relax Cf Cr mass Mu Iz vbox_file_name
 
 %----------------------------
 % LOAD DATA FROM VBOX SYSTEM
@@ -164,19 +164,32 @@ dt = Time(2)-Time(1);
 % SET MEASUREMENT AND PROCESS NOICE COVARIANCES
 %----------------------------------------------
 % Use as starting value 0.1 for each of the states in Q matrix
-% Q=diag([0.1;0.3;0.1]);
-Q=diag([0.1;0.1;0.1]);
-% Q=diag([0.04;0.07;0.03]); % Better result, from std of sim1. Final tune
+% Q=diag([0.1;0.1;0.1]);    % Default tuning
+Q=diag([0.04;0.07;0.03]); % Better result, from std of sim1. Final tune
+
+% For extended system
+% Q=diag([0.1;0.1;0.1]);
+
 
 % Use as starting value 0.01 for each of the measurements in R matrix
-% R=diag([0.002;0.3;0.002]);    %Based on the std from the measurement
-R=diag([0.01,0.01,0.01]);
+% R=diag([0.01,0.01,0.01]);   % Default tuning
 % R=diag([2.8;0.2;0.08]); % Better result, from std of sim1. Final tune
+
+% For extended system
+R=diag([0.1;0.2;0.08]);
+
 %--------------------------------------------------
 % SET INITIAL STATE AND STATE ESTIMATION COVARIANCE
 %--------------------------------------------------
-x_0= [0.01;0;0];  %Don't set vx to zero, otherwise divison-by-zero will occur
-P_0= diag([0.01;0.1;0.1]);
+% x_0= [0.01;0;0];  %Don't set vx to zero, otherwise divison-by-zero will occur
+% P_0= diag([0.01;0.1;0.01]);
+
+% For extended system
+vx_0 = 0.01;    % Don't set to zero
+vy_0 = 0;
+yawrate_0 = 0;
+x_0= [vx_0;vy_0;yawrate_0];
+P_0= diag([0.1;0.1;0.1]);
 
 
 %-----------------------
@@ -188,8 +201,10 @@ P_0= diag([0.01;0.1;0.1]);
 predictParam.dt=dt; 
 
 % Handles to state and measurement model functions.
-state_func_UKF = @Vehicle_state_eq;
-meas_func_UKF = @Vehicle_measure_eq;
+% state_func_UKF = @Vehicle_state_eq;
+% meas_func_UKF = @Vehicle_measure_eq;
+state_func_UKF = @Vehicle_state_eq_new;
+meas_func_UKF = @Vehicle_measure_eq_new;
 
 %-----------------------
 % FILTERING LOOP FOR UKF 
@@ -203,7 +218,7 @@ x_mat = x;
 for i = 2:n
     [x,P] = ukf_predict1(x,P,state_func_UKF,Q,SteerAngle(i),0.8,2,0); %Alpha 0.8, Beta 2, kappa 0
 
-    meas_Y = [vx_VBOX(i);ay_VBOX(i)+rx*(yawRate_VBOX(i)-yawRate_VBOX(i-1))/dt;yawRate_VBOX(i)];
+    meas_Y = [vx_VBOX(i);smooth(ay_VBOX(i))+rx*(yawRate_VBOX(i)-yawRate_VBOX(i-1))/dt;yawRate_VBOX(i)];
     [x,P] = ukf_update1(x,P,meas_Y,meas_func_UKF,R,SteerAngle(i),0.8,2,0);
     x_mat = [x_mat,x];
 
@@ -237,11 +252,11 @@ Beta_vy = atan(x_mat(2,:)./x_mat(1,:));
 %---------------------------------------------------------
 % CALCULATE THE ERROR VALES FOR THE ESTIMATE OF SLIP ANGLE
 %---------------------------------------------------------
-Beta_VBOX_smooth=smooth(Beta_VBOX(1700:2152),0.01,'rlowess'); 
-[e_beta_mean,e_beta_max,time_at_max,error] = errorCalc(Beta_vy(1700:2152),Beta_VBOX_smooth);
-disp(' ');
-fprintf('The MSE of Beta estimation is: %d \n',e_beta_mean);
-fprintf('The Max error of Beta estimation is: %d \n',max(e_beta_max));
+% Beta_VBOX_smooth=smooth(Beta_VBOX(1400:4728),0.01,'rlowess'); 
+% [e_beta_mean,e_beta_max,time_at_max,error] = errorCalc(Beta_vy(1700:2152),Beta_VBOX_smooth);
+% disp(' ');
+% fprintf('The MSE of Beta estimation is: %d \n',e_beta_mean);
+% fprintf('The Max error of Beta estimation is: %d \n',max(e_beta_max));
 
 %-----------------
 % PLOT THE RESULTS
@@ -272,23 +287,23 @@ title("Side slip")
 ylim([-0.1,0.3])
 disp("Plotting coming")
 
-% figure(2)
-% plot(Time,Beta_VBOX,'LineWidth',1)
+figure(2)
+plot(Time,Beta_VBOX,'LineWidth',1)
+hold on
+plot(Time,smooth(Beta_vy),'LineWidth',1)
 % hold on
-% plot(Time,smooth(Beta_vy),'LineWidth',1)
+% plot(Time(1200:end-200),out.Betay_mod.Data,'LineWidth',1)
 % hold on
-% plot(Time(800:end-300),out.Betay_mod.Data,'LineWidth',1)
+% plot(Time(1200:end-200),out.Betay_kin.Data,'LineWidth',1)
 % hold on
-% plot(Time(800:end-300),out.Betay_kin.Data,'LineWidth',1)
+% plot(Time(1200:end-200),out.Betay_wf.Data,'LineWidth',1)
 % hold on
-% plot(Time(800:end-300),out.Betay_wf.Data,'LineWidth',1)
-% hold on
-% plot(Time(800:end-300),out.Betay_wf_var.Data,'LineWidth',1,'Color','g')
-% title("Side slip, sim 4")
+% plot(Time(1200:end-200),out.Betay_wf_var.Data,'LineWidth',1,'Color','g')
+% title("Side slip, sim 2")
 % legend("VBOX","UKF", "Model","Kinetic","WF, fixed T","WF, var T")
 % % legend("VBOX","UKF","WF, var T")
-% xlim([Time(800),Time(end-300)])
-% ylim([-0.05,0.1])
+% xlim([Time(1200),Time(end-200)])
+% ylim([-0.1,0.5])
 % xlabel("Time")
 % ylabel("Slip amplitude")
 % grid on
