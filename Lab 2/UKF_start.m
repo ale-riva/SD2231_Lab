@@ -3,7 +3,7 @@
 % Following file is the start file for the state estimation using
 % Uncented Kalman Filter (UKF).
 %----------------------------------------------------------------
-% clear all;
+clear all;
 close all;
 clc;
 addpath('scripts')
@@ -26,11 +26,11 @@ global lf lr Ly_relax Cf Cr mass Mu Iz vbox_file_name
 % vbox_file_name='S90__035.VBO';   %Standstill
 
 %Need smoothing to get good plot
-vbox_file_name='S90__036.VBO';   %Circular driving to the left, radius=8m
+% vbox_file_name='S90__036.VBO';   %Circular driving to the left, radius=8m
 %Good estimation
 % vbox_file_name='S90__038.VBO';  %Slalom, v=30km/h
 % Need smooting but will not go down all the way
-% vbox_file_name='S90__040.VBO';  %Step steer to the left, v=100km/h
+vbox_file_name='S90__040.VBO';  %Step steer to the left, v=100km/h
 % Too large amplitude, need increasing Cf Cr, need negative ay
 % vbox_file_name='S90__041.VBO';  %Frequency sweep, v=50km/h
 
@@ -168,28 +168,28 @@ dt = Time(2)-Time(1);
 Q=diag([0.04;0.07;0.03]); % Better result, from std of sim1. Final tune
 
 % For extended system
-% Q=diag([0.1;0.1;0.1]);
+% Q=diag([2;6;0.27]);
 
 
 % Use as starting value 0.01 for each of the measurements in R matrix
 % R=diag([0.01,0.01,0.01]);   % Default tuning
-% R=diag([2.8;0.2;0.08]); % Better result, from std of sim1. Final tune
+R=diag([2.8;0.2;0.08]); % Better result, from std of sim1. Final tune
 
 % For extended system
-R=diag([0.1;0.2;0.08]);
+% R=diag([6.88;3.53;0.15]);
 
 %--------------------------------------------------
 % SET INITIAL STATE AND STATE ESTIMATION COVARIANCE
 %--------------------------------------------------
-% x_0= [0.01;0;0];  %Don't set vx to zero, otherwise divison-by-zero will occur
-% P_0= diag([0.01;0.1;0.01]);
+x_0= [0.01;0;0];  %Don't set vx to zero, otherwise divison-by-zero will occur
+P_0= diag([0.01;0.1;0.01]);
 
 % For extended system
-vx_0 = 0.01;    % Don't set to zero
-vy_0 = 0;
-yawrate_0 = 0;
-x_0= [vx_0;vy_0;yawrate_0];
-P_0= diag([0.1;0.1;0.1]);
+% vx_0 = 0.01;    % Don't set to zero
+% vy_0 = 0;
+% yawrate_0 = 0;
+% x_0= [vx_0;vy_0;yawrate_0];
+% P_0= diag([0.1;0.1;0.1]);
 
 
 %-----------------------
@@ -201,10 +201,10 @@ P_0= diag([0.1;0.1;0.1]);
 predictParam.dt=dt; 
 
 % Handles to state and measurement model functions.
-% state_func_UKF = @Vehicle_state_eq;
-% meas_func_UKF = @Vehicle_measure_eq;
-state_func_UKF = @Vehicle_state_eq_new;
-meas_func_UKF = @Vehicle_measure_eq_new;
+state_func_UKF = @Vehicle_state_eq;
+meas_func_UKF = @Vehicle_measure_eq;
+% state_func_UKF = @Vehicle_state_eq_new;
+% meas_func_UKF = @Vehicle_measure_eq_new;
 
 %-----------------------
 % FILTERING LOOP FOR UKF 
@@ -216,9 +216,9 @@ x=x_0;
 P = P_0;
 x_mat = x;
 for i = 2:n
-    [x,P] = ukf_predict1(x,P,state_func_UKF,Q,SteerAngle(i),0.8,2,0); %Alpha 0.8, Beta 2, kappa 0
+    [x,P] = ukf_predict1(x,P,state_func_UKF,Q,SteerAngle(i),0.8,2,0); %Alpha,Beta,Kappa 0.8, 2, 0
 
-    meas_Y = [vx_VBOX(i);smooth(ay_VBOX(i))+rx*(yawRate_VBOX(i)-yawRate_VBOX(i-1))/dt;yawRate_VBOX(i)];
+    meas_Y = [vx_VBOX(i);ay_VBOX(i)+rx*(yawRate_VBOX(i)-yawRate_VBOX(i-1))/dt;yawRate_VBOX(i)];
     [x,P] = ukf_update1(x,P,meas_Y,meas_func_UKF,R,SteerAngle(i),0.8,2,0);
     x_mat = [x_mat,x];
 
@@ -287,10 +287,10 @@ title("Side slip")
 ylim([-0.1,0.3])
 disp("Plotting coming")
 
-figure(2)
-plot(Time,Beta_VBOX,'LineWidth',1)
-hold on
-plot(Time,smooth(Beta_vy),'LineWidth',1)
+% figure(2)
+% plot(Time,Beta_VBOX,'LineWidth',1)
+% hold on
+% plot(Time,smooth(Beta_vy),'LineWidth',1)
 % hold on
 % plot(Time(1200:end-200),out.Betay_mod.Data,'LineWidth',1)
 % hold on

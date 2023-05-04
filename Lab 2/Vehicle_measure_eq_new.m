@@ -12,8 +12,11 @@ yawrate = x(3);
 alpha12 = atan((vy+yawrate*lf)/vx)-delta;
 alpha34 = atan((vy-yawrate*lr)/vx);
 
-lambda12 = (Mu*0.5*mass*9.82)/(2*Cf*abs(tan(alpha12)));
-lambda34 = (Mu*0.5*mass*9.82)/(2*Cr*abs(tan(alpha34)));
+num = Mu*0.5*mass*9.82;
+frac12 = 2*Cf*abs(tan(alpha12));
+frac34 = 2*Cf*abs(tan(alpha34));
+lambda12 = num/frac12;
+lambda34 = num/frac34;
 
 if lambda12 < 1
     slip_func12 = (2-lambda12)*lambda12;
