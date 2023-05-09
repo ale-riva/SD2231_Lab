@@ -10,8 +10,8 @@ vy = x(2);
 yawrate = x(3);
 dt = 0.01;
 
-alpha12 = atan2((vy+yawrate*lf),vx)-delta;
-alpha34 = atan2((vy-yawrate*lr),vx);
+alpha12 = atan((vy+yawrate*lf)/vx)-delta;
+alpha34 = atan((vy-yawrate*lr)/vx);
 F12 = -Cf*alpha12;
 F34 = -Cr*alpha34;
   
