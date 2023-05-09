@@ -12,12 +12,12 @@ yawrate = x(3);
 % F34 = x(5);
 dt = 0.01;
 
-alpha12 = atan((vy+yawrate*lf)/vx)-delta;
-alpha34 = atan((vy-yawrate*lr)/vx);
+alpha12 = atan2((vy+yawrate*lf),vx)-delta;
+alpha34 = atan2((vy-yawrate*lr),vx);
 
-num = Mu*0.5*mass*9.82;
+num = Mu*0.5*mass*9.81;
 frac12 = 2*Cf*abs(tan(alpha12));
-frac34 = 2*Cf*abs(tan(alpha34));
+frac34 = 2*Cr*abs(tan(alpha34));
 lambda12 = num/frac12;
 lambda34 = num/frac34;
 

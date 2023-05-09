@@ -12,7 +12,7 @@ disp(' ');
 
 % Set global variables so that they can be accessed from other matlab
 % functions and files
-global lf lr Ly_relax Cf Cr mass Mu Iz vbox_file_name
+global lf lr Ly_relax Cf Cr mass Mu Iz vbox_file_name g L
 
 %----------------------------
 % LOAD DATA FROM VBOX SYSTEM
@@ -23,15 +23,15 @@ global lf lr Ly_relax Cf Cr mass Mu Iz vbox_file_name
 %2.8 bar in all four tyres
 %Two persons in the front
 
-% vbox_file_name='S90__035.VBO';   %Standstill
+%vbox_file_name='S90__035.VBO';   %Standstill
 
 %Need smoothing to get good plot
-% vbox_file_name='S90__036.VBO';   %Circular driving to the left, radius=8m
+vbox_file_name='S90__036.VBO';   %Circular driving to the left, radius=8m
 %Good estimation
-% vbox_file_name='S90__038.VBO';  %Slalom, v=30km/h
+%vbox_file_name='S90__038.VBO';  %Slalom, v=30km/h
 % Need smooting but will not go down all the way
-vbox_file_name='S90__040.VBO';  %Step steer to the left, v=100km/h
-% Too large amplitude, need increasing Cf Cr, need negative ay
+% vbox_file_name='S90__040.VBO';  %Step steer to the left, v=100km/h
+%  Too large amplitude, need increasing Cf Cr, need negative ay
 % vbox_file_name='S90__041.VBO';  %Frequency sweep, v=50km/h
 
 
@@ -132,7 +132,7 @@ Lx_relax=0.05;      % Longitudinal relaxation lenth of tyre (m)
 Ly_relax=0.15;      % Lateral relaxation lenth of tyre (m)
 Roll_res=0.01;      % Rolling resistance of tyre
 rollGrad=4.5;       % rollangle deg per latacc
-rx=0.29;         % distance from CoG to IMU x-axle
+rx=-0.29;           % distance from CoG to IMU x-axle
 ry=0;               % distance from CoG to IMU y-axle
 rz=0;               % distance from CoG to IMU z-axle
 
@@ -157,7 +157,22 @@ ax_VBOX         = vbo.channels(1, 57).data.*g;
 ay_VBOX         = vbo.channels(1, 58).data.*g;
 Beta_VBOX       = (vy_VBOX + rx*yawRate_VBOX)./vx_VBOX;
 
-n = length(Time);
+% Time_cut = Time;
+Time_cut = Time(1001:end-400);
+yawRate_VBOX    = yawRate_VBOX(1001:end-400);
+vx_VBOX = vx_VBOX(1001:end-400);
+vy_VBOX = vy_VBOX(1001:end-400);
+SteerAngle = SteerAngle(1001:end-400);
+ax_VBOX = ax_VBOX(1001:end-400);
+ay_VBOX = ay_VBOX(1001:end-400);
+Beta_VBOX = Beta_VBOX(1001:end-400);
+slip_rr        = vbo.channels(1, 69).data;
+rrwhlsp        = vbo.channels(1,45).data;
+slip_rr_formula =-(Rt.*rrwhlsp(size(vx_VBOX,2),1)' - vx_VBOX)./Rt.*rrwhlsp(size(vx_VBOX,2),1)';
+figure
+plot(slip_rr_formula)
+
+n = length(Time_cut);
 dt = Time(2)-Time(1);
 %%
 %----------------------------------------------
@@ -165,18 +180,35 @@ dt = Time(2)-Time(1);
 %----------------------------------------------
 % Use as starting value 0.1 for each of the states in Q matrix
 % Q=diag([0.1;0.1;0.1]);    % Default tuning
-Q=diag([0.04;0.07;0.03]); % Better result, from std of sim1. Final tune
+%Q=diag([0.04;0.07;0.03]); % Better result, from std of sim1. Final tune
 
 % For extended system
 % Q=diag([2;6;0.27]);
 
+model = 1;
+%0 for linear tyre model
+%1 for brush tyre model
+if model == 0
+%     Q=diag([0.04;0.07;0.03]); 
+%     R=diag([2.8;0.2;0.08]); 
+      Q=diag([0.1;0.1;0.1]);
+      R=diag([0.01,0.01,0.01])
+elseif model == 1
+%     Q=diag([2;6;0.27]);
+%     R=diag([6.88;3.53;0.15]);
+      Q=diag([0.04;0.01;0.03]); 
+      R=diag([2.8;0.2;0.08]);
+      Cf = 160000;
+      Cr = 200000;
+end
 
 % Use as starting value 0.01 for each of the measurements in R matrix
 % R=diag([0.01,0.01,0.01]);   % Default tuning
-R=diag([2.8;0.2;0.08]); % Better result, from std of sim1. Final tune
+%R=diag([2.8;0.2;0.08]); % Better result, from std of sim1. Final tune
 
 % For extended system
 % R=diag([6.88;3.53;0.15]);
+
 
 %--------------------------------------------------
 % SET INITIAL STATE AND STATE ESTIMATION COVARIANCE
@@ -201,10 +233,13 @@ P_0= diag([0.01;0.1;0.01]);
 predictParam.dt=dt; 
 
 % Handles to state and measurement model functions.
-state_func_UKF = @Vehicle_state_eq;
-meas_func_UKF = @Vehicle_measure_eq;
-% state_func_UKF = @Vehicle_state_eq_new;
-% meas_func_UKF = @Vehicle_measure_eq_new;
+if model == 0
+    state_func_UKF = @Vehicle_state_eq;
+    meas_func_UKF = @Vehicle_measure_eq;
+elseif model == 1
+    state_func_UKF = @Vehicle_state_eq_new2;
+    meas_func_UKF = @Vehicle_measure_eq_new2;
+end
 
 %-----------------------
 % FILTERING LOOP FOR UKF 
@@ -215,10 +250,12 @@ disp('Filtering the signal with UKF...');
 x=x_0;
 P = P_0;
 x_mat = x;
+
+% smooth(ay_VBOX(i)+rx*(yawRate_VBOX(i)-yawRate_VBOX(i-1))/dt);
 for i = 2:n
     [x,P] = ukf_predict1(x,P,state_func_UKF,Q,SteerAngle(i),0.8,2,0); %Alpha,Beta,Kappa 0.8, 2, 0
 
-    meas_Y = [vx_VBOX(i);ay_VBOX(i)+rx*(yawRate_VBOX(i)-yawRate_VBOX(i-1))/dt;yawRate_VBOX(i)];
+    meas_Y = [smooth(vx_VBOX(i));smooth(ay_VBOX(i)+rx*(yawRate_VBOX(i)-yawRate_VBOX(i-1))/dt);smooth(yawRate_VBOX(i))];
     [x,P] = ukf_update1(x,P,meas_Y,meas_func_UKF,R,SteerAngle(i),0.8,2,0);
     x_mat = [x_mat,x];
 
@@ -248,7 +285,7 @@ disp('Filtering done');
 % CALCULATE THE SLIP ANGLE OF THE VEHICLE
 %----------------------------------------
 
-Beta_vy = atan(x_mat(2,:)./x_mat(1,:));
+Beta_vy = atan2(x_mat(2,:),x_mat(1,:));
 %---------------------------------------------------------
 % CALCULATE THE ERROR VALES FOR THE ESTIMATE OF SLIP ANGLE
 %---------------------------------------------------------
@@ -261,31 +298,31 @@ Beta_vy = atan(x_mat(2,:)./x_mat(1,:));
 %-----------------
 % PLOT THE RESULTS
 %-----------------
-clf
-figure(1)
-subplot(2,2,1)
-plot(Time,vx_VBOX)
-hold on
-plot(Time,x_mat(1,:))
-title("vx velocity")
-subplot(2,2,2)
-plot(Time,smooth(vy_VBOX))
-hold on
-plot(Time,smooth(x_mat(2,:)))
-title("vy velocity")
-ylim([-1,1])
-subplot(2,2,3)
-plot(Time,yawRate_VBOX)
-hold on
-plot(Time,x_mat(3,:))
-title("yawrate")
-subplot(2,2,4)
-plot(Time,smooth(Beta_VBOX))
-hold on
-plot(Time,smooth(Beta_vy))
-title("Side slip")
-ylim([-0.1,0.3])
-disp("Plotting coming")
+% clf
+% figure(1)
+% subplot(2,2,1)
+% plot(Time,vx_VBOX)
+% hold on
+% plot(Time,x_mat(1,:))
+% title("vx velocity")
+% subplot(2,2,2)
+% plot(Time,smooth(vy_VBOX))
+% hold on
+% plot(Time,smooth(x_mat(2,:)))
+% title("vy velocity")
+% ylim([-1,1])
+% subplot(2,2,3)
+% plot(Time,yawRate_VBOX)
+% hold on
+% plot(Time,x_mat(3,:))
+% title("yawrate")
+% subplot(2,2,4)
+% plot(Time,smooth(Beta_VBOX))
+% hold on
+% plot(Time,smooth(Beta_vy))
+% title("Side slip")
+% ylim([-0.1,0.3])
+% disp("Plotting coming")
 
 % figure(2)
 % plot(Time,Beta_VBOX,'LineWidth',1)
@@ -307,3 +344,123 @@ disp("Plotting coming")
 % xlabel("Time")
 % ylabel("Slip amplitude")
 % grid on
+
+%%
+vy_COG = vy_VBOX  + rx.*yawRate_VBOX;
+
+figure
+plot(Time_cut,vx_VBOX)
+hold on
+plot(Time_cut,x_mat(1,:))
+legend("meas","UKF")
+title("vx velocity")
+figure
+plot(Time_cut,smooth(vy_COG))
+hold on
+plot(Time_cut,smooth(x_mat(2,:)))
+title("vy velocity")
+legend("meas","UKF")
+%ylim([-1,1])
+figure
+plot(Time_cut,yawRate_VBOX)
+hold on
+plot(Time_cut,x_mat(3,:))
+title("yawrate")
+legend("meas","UKF")
+figure
+plot(Time_cut,smooth(Beta_VBOX))
+hold on
+plot(Time_cut,smooth(Beta_vy))
+title("Side slip")
+legend("meas","UKF")
+%ylim([-0.1,0.3])
+disp("Plotting coming")
+
+if model == 0
+    vx_lin = x_mat(1,:);
+    vy_lin = x_mat(2,:);
+    yawRate_lin = x_mat(3,:);
+    beta_lin = Beta_vy;
+elseif model ==1
+    vx_ext = x_mat(1,:);
+    vy_ext = x_mat(2,:);
+    yawRate_ext = x_mat(3,:);
+    beta_ext = Beta_vy;
+end
+
+%% MSE and MAX
+start_time_index = 1001;
+time_start = Time(start_time_index);
+
+
+sim1 = [4 37.28];
+sim2 = [5.5 21.78];
+sim3 = [7 11.510];
+sim4 = [0 27.23];
+
+switch vbox_file_name
+    case 'S90__036.VBO'
+        sim_txt = "sim1";
+        sim_ok = sim1;
+    case 'S90__038.VBO'
+        sim_txt = "sim2";
+        sim_ok = sim2;
+    case 'S90__040.VBO'
+        sim_txt = "sim3";
+        sim_ok = sim3;
+    case 'S90__041.VBO'
+        sim_txt = "sim4";
+        sim_ok = sim4;
+end
+sim_ok
+sim = sim_ok.*100+1;
+sim_truth = (sim_ok +time_start).*100+1;
+
+if model == 0
+    vx_ukf = vx_lin;
+    vy_ukf = vy_lin; 
+    yawRate_ukf = yawRate_lin; 
+    beta_ukf = beta_lin ;
+elseif model ==1
+    vx_ukf = vx_ext;
+    vy_ukf = vy_ext; 
+    yawRate_ukf = yawRate_ext; 
+    beta_ukf = beta_ext ;
+end
+
+figure
+plot(smooth(beta_ukf(sim(1):sim(2))));
+hold on
+plot(smooth(Beta_VBOX(sim(1):sim(2))));
+title("check")
+%Beta_VBOX_smooth(start_time_index:(start_time_index+length(out.Betay_mod.Data)-1),2)
+[error_mean_vx,error_max_vx,time_at_max_vx,~] = errorCalc(vx_ukf(sim(1):sim(2)),vx_VBOX(sim(1):sim(2))');
+fprintf("VX: MSE=%e; MAX=%e\n",error_mean_vx,error_max_vx)
+
+[error_mean_vy,error_max_vy,time_at_max_vy,~] = errorCalc(smooth(vy_ukf(sim(1):sim(2))),smooth(vy_COG(sim(1):sim(2))'));
+fprintf("VY: MSE=%e; MAX=%e\n",error_mean_vy,error_max_vy)
+
+[error_mean_yr,error_max_yr,time_at_max_yr,~] = errorCalc(yawRate_ukf(sim(1):sim(2)),yawRate_VBOX(sim(1):sim(2))');
+fprintf("YR: MSE=%e; MAX=%e\n",error_mean_yr,error_max_yr)
+
+[error_mean_beta,error_max_beta,time_at_max_beta,~] = errorCalc(smooth(beta_ukf(sim(1):sim(2))),smooth(Beta_VBOX(sim(1):sim(2))'));
+fprintf("BETA: MSE=%e; MAX=%e\n",error_mean_beta,error_max_beta)
+
+%%
+
+fileID = fopen('task2.txt','a');
+fprintf(fileID,"\n\n simulation: %s\n",sim_txt)
+if model == 0
+    fprintf(fileID,"MODEL linear\n");
+elseif model ==1
+    fprintf(fileID,"MODEL extended\n");
+end
+fprintf(fileID,"R:[%f,%f,%f]\n",diag(R).');
+fprintf(fileID,"Cf:%d,   Cr:%d\n",Cf,Cr);
+%fprintf(fileID,"time interval: [%f %f]\n",start_time_index)
+fprintf(fileID,"VX: MSE=%e; MAX=%e\n",error_mean_vx,error_max_vx)
+fprintf(fileID,"VY: MSE=%e; MAX=%e\n",error_mean_vy,error_max_vy)
+fprintf(fileID,"YR: MSE=%e; MAX=%e\n",error_mean_yr,error_max_yr)
+fprintf(fileID,"BETA: MSE=%e; MAX=%e\n",error_mean_beta,error_max_beta)
+fclose(fileID);
+    

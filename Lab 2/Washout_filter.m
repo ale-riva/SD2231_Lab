@@ -134,6 +134,7 @@ disp(sprintf("WF_VAR: MSE=%e; MAX=%e",error_mean_wf_var,error_max_wf_var))
 fileID = fopen('task1d.txt','a');
 fprintf(fileID,"\n\n simulation: %s\n",sim_txt)
 %fprintf(fileID,"time interval: [%f %f]\n",start_time_index)
+fprintf(fileID,"Cf:%d    Cr:%d\n",Cf,Cr)
 fprintf(fileID,"MOD: MSE=%e; MAX=%e\n",error_mean_mod,error_max_mod)
 fprintf(fileID,"KYN: MSE=%e; MAX=%e\n",error_mean_kin,error_max_kin)
 fprintf(fileID,"WF(T:%f): MSE=%e; MAX=%e\n",T,error_mean_wf,error_max_wf)

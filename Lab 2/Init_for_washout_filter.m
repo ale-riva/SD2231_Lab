@@ -26,9 +26,9 @@ global vbox_file_name
 %vbox_file_name='S90__035.VBO';   %Standstill
 
 %vbox_file_name='S90__036.VBO';   %Circular driving to the left, radius=8m
-%vbox_file_name='S90__038.VBO';   %Slalom, v=30km/h
+vbox_file_name='S90__038.VBO';   %Slalom, v=30km/h
 %vbox_file_name='S90__040.VBO';   %Step steer to the left, v=100km/h
-vbox_file_name='S90__041.VBO';   %Frequency sweep, v=50km/h
+%vbox_file_name='S90__041.VBO';   %Frequency sweep, v=50km/h
 
 
 vboload
@@ -174,6 +174,7 @@ SteerAngle      = [Time,vbo.channels(1, 39).data./Ratio];
 ax_VBOX         = [Time,vbo.channels(1, 57).data.*g];
 ay_VBOX         = [Time,vbo.channels(1, 58).data.*g];
 Beta_VBOX       = [Time,(vy_VBOX(:,2) + rx*yawRate_VBOX(:,2))./vx_VBOX(:,2)];
+slip_angle      = [Time,vbo.channels(1, 51).data];
 %%
 T = 0.8;   %Weight for model vs integral
 mdl = 'washout_filter_sim_2020';
@@ -195,7 +196,7 @@ figure
 plot(ax_VBOX(1001:end-400,1),ax_VBOX_smooth(1001:end-400,2))
 hold on
 plot(ax_VBOX(1001:end-400,1),ax_VBOX(1001:end-400,2))
-
+%%
 out = sim(mdl);
 % plot(ax_VBOX(1001:end-400,1),T_var(1001:end-400))
 % legend("ax","ay","T_var")
@@ -206,10 +207,14 @@ out = sim(mdl);
 % legend("non","filt")
 
 %%
-% figure(2)
-% plot(Time(800:end-300),Beta_VBOX(800:end-300,2),'LineWidth',2)
-% hold on
-% plot(Time(800:end-300),out.Betay_mod.Data,'LineWidth',2)
+figure
+plot(Time(1001:end-400),Beta_VBOX(1001:end-400,2),'LineWidth',2)
+hold on
+plot(Time(1001:end-400),out.Betay_mod.Data,'LineWidth',2)
+grid on
+legend("$\beta^{VBOX}$","$\beta^{mod}$",'Interpreter','latex')
+xlabel("Time [s]");
+ylabel("Side Slip")
 % hold on
 % plot(Time(800:end-300),out.Betay_kin.Data,'LineWidth',2)
 % hold on
