@@ -186,25 +186,13 @@ ay_VBOX_smooth=[Time,smooth(ay_VBOX(:,2),0.01,'rlowess')];
 ax_VBOX_smooth=[Time,smooth(ax_VBOX(:,2),0.1,'rlowess')];
 yawRate_smooth = [Time,smooth(yawRate_VBOX(:,2),0.01,'rlowess')];
 yawAcc_smooth =[Time,smooth([diff(yawRate_VBOX(:,2))/Ts;0],0.01,'rlowess')];
-%ax_VBOX_smooth2=smooth(ax_VBOX(:,2),0.01,'rlowess');
 
 derSteerSignal = [Time,[diff(SteerAngle(:,2));0]/Ts];
 
-%T_var = 2*abs(ax_VBOX_smooth(:,2))+0.05
 arr_ind = 1:1:size(Time,1);
-figure
-plot(ax_VBOX(1001:end-400,1),ax_VBOX_smooth(1001:end-400,2))
-hold on
-plot(ax_VBOX(1001:end-400,1),ax_VBOX(1001:end-400,2))
+
 %%
 out = sim(mdl);
-% plot(ax_VBOX(1001:end-400,1),T_var(1001:end-400))
-% legend("ax","ay","T_var")
-% figure
-% plot(ax_VBOX(1001:end-400,1),ax_VBOX(1001:end-400,2))
-% hold on
-% plot(ax_VBOX(1001:end-400,1),ax_VBOX_smooth)
-% legend("non","filt")
 
 %%
 figure
@@ -215,43 +203,5 @@ grid on
 legend("$\beta^{VBOX}$","$\beta^{mod}$",'Interpreter','latex')
 xlabel("Time [s]");
 ylabel("Side Slip")
-% hold on
-% plot(Time(800:end-300),out.Betay_kin.Data,'LineWidth',2)
-% hold on
-% plot(Time(800:end-300),out.Betay_wf.Data,'LineWidth',2)
-% hold on
-% plot(Time(800:end-300),out.Betay_wf_var.Data,'LineWidth',2)
-% title("Side slip, sim 3")
-% legend("VBOX","Model","Kinetic","WF, fixed T","WF, var T")
-% xlim([Time(800),Time(end-300)])
-% ylim([-0.3,0.3])
-% xlabel("Time")
-% ylabel("Slip amplitude")
-% grid on
 
-%% Cornering stiffness estimation with betaless method
-% ay = ay_VBOX(:,2);
-% yawRate = yawRate_VBOX(:,2);
-% yawAcc = [diff(yawRate);0]/Ts;
-% yawAcc_smooth =smooth(yawAcc,0.005,'rlowess');
-% yawAcc_VBOX = [Time,yawAcc_smooth];
-% 
-% 
-% figure
-% plot(yawRate)
-% hold on
-% plot(yawAcc_smooth)
-% vx = vx_VBOX(:,2);
-% m = mass;
-% delta = SteerAngle(:,2).*Ratio;
-% 
-% A = [m*L.*ay, L*(delta- L.*yawRate./vx)];
-% b = Iz.*yawAcc_smooth+m*lr.*ay;
-%  
-% X = lsqr(A,b);
-% X1 = X(1); X2 = X(2);
-% C12 = X2./X1;
-% C34 = ((X1)./(1-X1)).*C12;
 
-% Cf = C12;
-% Cr = C34;

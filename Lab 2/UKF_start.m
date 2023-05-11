@@ -26,13 +26,13 @@ global lf lr Ly_relax Cf Cr mass Mu Iz vbox_file_name g L
 %vbox_file_name='S90__035.VBO';   %Standstill
 
 %Need smoothing to get good plot
-% vbox_file_name='S90__036.VBO';   %Circular driving to the left, radius=8m
+vbox_file_name='S90__036.VBO';   %Circular driving to the left, radius=8m
 %Good estimation
-% vbox_file_name='S90__038.VBO';  %Slalom, v=30km/h
+%vbox_file_name='S90__038.VBO';  %Slalom, v=30km/h
 % Need smooting but will not go down all the way
- vbox_file_name='S90__040.VBO';  %Step steer to the left, v=100km/h
+%vbox_file_name='S90__040.VBO';  %Step steer to the left, v=100km/h
 %  Too large amplitude, need increasing Cf Cr, need negative ay
-% vbox_file_name='S90__041.VBO';  %Frequency sweep, v=50km/h
+%vbox_file_name='S90__041.VBO';  %Frequency sweep, v=50km/h
 
 
 vboload
@@ -126,8 +126,8 @@ Iz=3089;            % Yaw inertia (kg-m2)
 tw=1.617;           % Track width (m)
 h_cog = 0.570;      % Height of CoG above ground
 Ratio=16.3;         % Steering gear ratio
-Cf=200000;          % Lateral stiffness front axle (N)
-Cr=250000;          % Lateral stiffness rear axle (N)
+Cf=100000;          % Lateral stiffness front axle (N)
+Cr=100000;          % Lateral stiffness rear axle (N)
 Lx_relax=0.05;      % Longitudinal relaxation lenth of tyre (m)
 Ly_relax=0.15;      % Lateral relaxation lenth of tyre (m)
 Roll_res=0.01;      % Rolling resistance of tyre
@@ -156,22 +156,6 @@ SteerAngle      = vbo.channels(1, 39).data./Ratio;
 ax_VBOX         = vbo.channels(1, 57).data.*g;
 ay_VBOX         = vbo.channels(1, 58).data.*g;
 Beta_VBOX       = (vy_VBOX + rx*yawRate_VBOX)./vx_VBOX;
-
-
-% Time_cut = Time(1001:end-400);
-% yawRate_VBOX    = yawRate_VBOX(1001:end-400);
-% vx_VBOX = vx_VBOX(1001:end-400);
-% vy_VBOX = vy_VBOX(1001:end-400);
-% SteerAngle = SteerAngle(1001:end-400);
-% ax_VBOX = ax_VBOX(1001:end-400);
-% ay_VBOX = ay_VBOX(1001:end-400);
-% Beta_VBOX = Beta_VBOX(1001:end-400);
-% slip_rr        = vbo.channels(1, 69).data;
-% rrwhlsp        = vbo.channels(1,45).data;
-% slip_rr_formula =-(Rt.*rrwhlsp(size(vx_VBOX,2),1)' - vx_VBOX)./Rt.*rrwhlsp(size(vx_VBOX,2),1)';
-% figure
-% plot(slip_rr_formula)
-
 n = length(Time);
 dt = Time(2)-Time(1);
 %%
@@ -191,11 +175,9 @@ model = 1;
 if model == 0
     Q=diag([0.04;0.07;0.03]); 
     R=diag([0.1;0.2;0.08]); 
-%       Q=diag([0.1;0.1;0.1]);
-%       R=diag([0.01,0.01,0.01])
+
 elseif model == 1
-%     Q=diag([2;6;0.27]);
-%     R=diag([6.88;3.53;0.15]);
+
       Q=diag([0.04;0.07;0.03]); 
       R=diag([0.1;0.2;0.08]);
 end
@@ -287,62 +269,6 @@ Beta_vy = atan(x_mat(2,:)./x_mat(1,:));
 %---------------------------------------------------------
 % CALCULATE THE ERROR VALES FOR THE ESTIMATE OF SLIP ANGLE
 %---------------------------------------------------------
-% Beta_VBOX_smooth=smooth(Beta_VBOX(1400:4728),0.01,'rlowess'); 
-% [e_beta_mean,e_beta_max,time_at_max,error] = errorCalc(Beta_vy(1700:2152),Beta_VBOX_smooth);
-% disp(' ');
-% fprintf('The MSE of Beta estimation is: %d \n',e_beta_mean);
-% fprintf('The Max error of Beta estimation is: %d \n',max(e_beta_max));
-
-%-----------------
-% PLOT THE RESULTS
-%-----------------
-% clf
-% figure(1)
-% subplot(2,2,1)
-% plot(Time,vx_VBOX)
-% hold on
-% plot(Time,x_mat(1,:))
-% title("vx velocity")
-% subplot(2,2,2)
-% plot(Time,smooth(vy_VBOX))
-% hold on
-% plot(Time,smooth(x_mat(2,:)))
-% title("vy velocity")
-% ylim([-1,1])
-% subplot(2,2,3)
-% plot(Time,yawRate_VBOX)
-% hold on
-% plot(Time,x_mat(3,:))
-% title("yawrate")
-% subplot(2,2,4)
-% plot(Time,smooth(Beta_VBOX))
-% hold on
-% plot(Time,smooth(Beta_vy))
-% title("Side slip")
-% ylim([-0.1,0.3])
-% disp("Plotting coming")
-
-% figure(2)
-% plot(Time,Beta_VBOX,'LineWidth',1)
-% hold on
-% plot(Time,smooth(Beta_vy),'LineWidth',1)
-% hold on
-% plot(Time(1200:end-200),out.Betay_mod.Data,'LineWidth',1)
-% hold on
-% plot(Time(1200:end-200),out.Betay_kin.Data,'LineWidth',1)
-% hold on
-% plot(Time(1200:end-200),out.Betay_wf.Data,'LineWidth',1)
-% hold on
-% plot(Time(1200:end-200),out.Betay_wf_var.Data,'LineWidth',1,'Color','g')
-% title("Side slip, sim 2")
-% legend("VBOX","UKF", "Model","Kinetic","WF, fixed T","WF, var T")
-% % legend("VBOX","UKF","WF, var T")
-% xlim([Time(1200),Time(end-200)])
-% ylim([-0.1,0.5])
-% xlabel("Time")
-% ylabel("Slip amplitude")
-% grid on
-
 %%
 vy_COG = vy_VBOX  + rx.*yawRate_VBOX;
 vx = x_mat(1,:);
@@ -435,7 +361,6 @@ plot(smooth(beta_ukf(sim(1):sim(2))));
 hold on
 plot(smooth(Beta_VBOX(sim(1):sim(2))));
 title("check")
-%Beta_VBOX_smooth(start_time_index:(start_time_index+length(out.Betay_mod.Data)-1),2)
 [error_mean_vx,error_max_vx,time_at_max_vx,~] = errorCalc(vx_ukf(sim(1):sim(2)),vx_VBOX(sim(1):sim(2))');
 fprintf("VX: MSE=%e; MAX=%e\n",error_mean_vx,error_max_vx)
 

@@ -1,4 +1,4 @@
-function y_n = Vehicle_measure_eq(x,delta)
+function y_n = Vehicle_measure_eq_new2(x,delta)
 % ADDME Measurement function
 %    x = the states
 %    param = parameters that you might need, such as vehicle parameters.
@@ -9,11 +9,11 @@ vx = x(1);
 vy = x(2);
 yawrate = x(3);
 
-alpha12 = atan2((vy+yawrate*lf),vx)-delta;
-alpha34 = atan2((vy-yawrate*lr),vx);
+alpha12 = atan((vy+yawrate*lf)/vx)-delta;
+alpha34 = atan((vy-yawrate*lr)/vx);
 Fz = mass*g;
-lambda12 = (Mu*mass*g*lf)/(2*L*Cf*abs(tan(alpha12)));
-lambda34 = (Mu*mass*g*lr)/(2*Cr*abs(tan(alpha34)));
+lambda12 = (Mu*mass*g*lr)/(2*L*Cf*abs(tan(alpha12)));
+lambda34 = (Mu*mass*g*lf)/(2*L*Cr*abs(tan(alpha34)));
 
 if lambda12 <=1
     f_lambda12 = lambda12*(2-lambda12);

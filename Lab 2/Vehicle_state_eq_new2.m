@@ -10,10 +10,10 @@ vy = x(2);
 yawrate = x(3);
 dt = 0.01;
 
-alpha12 = atan2((vy+yawrate*lf),vx)-delta;
-alpha34 = atan2((vy-yawrate*lr),vx);
-lambda12 = (Mu*mass*g*lf)/(2*L*Cf*abs(tan(alpha12)));
-lambda34 = (Mu*mass*g*lr)/(2*L*Cr*abs(tan(alpha34)));
+alpha12 = atan((vy+yawrate*lf)/vx)-delta;
+alpha34 = atan((vy-yawrate*lr)/vx);
+lambda12 = (Mu*mass*g*lr)/(2*L*Cf*abs(tan(alpha12)));
+lambda34 = (Mu*mass*g*lf)/(2*L*Cr*abs(tan(alpha34)));
 
 if lambda12 <=1
     f_lambda12 = lambda12*(2-lambda12);
