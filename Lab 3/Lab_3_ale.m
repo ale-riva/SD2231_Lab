@@ -2,8 +2,6 @@ clear all
 close all
 clc
 
-
-
 %% Task 1.2
 mp = 0.16; %mass
 cp = 0.4; %damping
@@ -15,7 +13,8 @@ r = cp/(2*sqrt(kp*mp));
 %% Basic excitations
 %excitation a -simulink
 %excition b - simulink
-out  = sim("excitations.slx");
+out  = sim('excitations','StartTime','0','StopTime','20','FixedStep','0.01');;
+
 excA = out.excA.signals.values;
 excB = out.excB.signals.values;
 time = out.excA.time;
@@ -192,13 +191,14 @@ ylabel('Phase angle(Degrees)')
 xlabel('Frequency(rad/s)')
 sgtitle("first tuning")
 
-%% Task 2.3
+%% Task 2.3 PD
 
 s =tf('s')
 dd = 1.5*cp;
 dp = 0;
 PD_sh = (kp/mp)/(s^2 +dd/mp*s +(kp+dp)/mp);
-r_Pd_sh = dd/(2*sqrt(kp*mp))
+%r_Pd_sh = dd/(2*sqrt(kp*mp))
+%To check that system is still underdamped and that wn is unchanged
 [wn_pd,r_pd] = damp(PD_sh);
 
 %
@@ -228,8 +228,6 @@ legend("PD Skyhook","passive damping","w_n","w_n PD")
 ylabel('Phase angle(Degrees)')
 xlabel('Frequency(rad/s)')
 sgtitle("second tuning")
-
-
 
 excA_resp_sh = lsim(PD_sh,excA,time);
 figure
@@ -310,7 +308,7 @@ grid on
 
 ylabel('Phase angle(Degrees)')
 xlabel('Frequency(rad/s)')
-sgtitle("skyhook critically damped")
+sgtitle("PD critically damped")
 
 % As a double check, the step response of the system should be with no
 % oscillations and the fastest to converge
@@ -336,12 +334,12 @@ legend("$d_d = c_{critical}$","$d_d = 0.9c_{critical}$","$d_d = 1.1c_{critical}$
 ylim([0.99,1.01])
 xlim([0,4])
 title("check for critically damped active system")
-%% Task 3.1
+%% Task 3.1 PID
 close all
 s = tf('s')
-hd = 1.5*cp;
+hd = cp;
 hp = 0;
-hi = 100;
+hi =0.9* wn^2*cp;
 %wn_pid = (kp+;
 PID_sh = (kp)/(s^2*mp + s*hd + (kp+hp)+hi/s);
 [wn_pid,r_pid] = damp(PID_sh)
@@ -370,12 +368,13 @@ xline(wn_pid(end),'b--','LineWidth',1)
 legend("PID Skyhook","passive damping","w_n",'w_n PID')
 ylabel('Phase angle(Degrees)')
 xlabel('Frequency(rad/s)')
-sgtitle("")
+sgtitle(hi)
 
+%%
 %comparison with excitations
-excA_resp_sh = lsim(PID_sh,excA,time);
+excA_resp_pid = lsim(PID_sh,excA,time);
 figure
-plot(time,excA_resp_sh);
+plot(time,excA_resp_pid);
 grid on
 hold on
 plot(time,excA_resp,'--')
@@ -385,9 +384,9 @@ xlabel("Time [s]")
 ylabel("$z_p$ Amplitude",'Interpreter','latex')
 
 
-excB_resp_sh = lsim(PID_sh,excB,time);
+excB_resp_pid = lsim(PID_sh,excB,time);
 figure
-plot(time,excB_resp_sh);
+plot(time,excB_resp_pid);
 grid on
 hold on
 plot(time,excB_resp,'--')
@@ -402,7 +401,88 @@ s = j*w_range; % complex pulsation vector
 % compute transfer function modulus 
 PID_sh_mod = abs((kp*s)./(s.^3*mp + s.^2*hd + (kp+hp)*s+hi));
 % PSD out 
-PSD_excC_resp_sh = (PID_sh_mod.^2).*PSD_excC; 
+PSD_excC_resp_pid = (PID_sh_mod.^2).*PSD_excC; 
+figure
+semilogy(w_range,PSD_excC_resp_pid);
+grid on
+hold on
+semilogy(w_range,PSD_excC_resp,'--')
+legend("PID","passive")
+title("response to Excitation C (PSD)")
+xlabel("w range [rad/s]")
+ylabel("PSD Power Spectral Density")
+
+
+%step response
+y_pid = step(PID_sh,time)
+figure
+plot(time,y_pid)
+grid on
+title("step response for PID controlled system")
+
+
+%% Task 4.1 Skyhook control
+s = tf('s')
+T = 3*cp;
+SH_ctrl = kp/(mp*s^2+T*s+kp);
+[wn_sh,r_sh] = damp(SH_ctrl);
+w=logspace(0,3,100040); %Define frequency range
+[A_sh,phi_sh]=bode(SH_ctrl,w); %Amplitude ratio (A) and phase shift (phi)
+figure
+subplot(2,1,1)
+loglog(w,A_sh(:),'LineWidth',1) %Amplitude ratio vs frequency
+hold on
+loglog(w,A(:),'LineWidth',1) %Amplitude ratio vs frequency
+grid on
+ylabel('Magnitude')
+xlim([1,1000])
+ylim([0.01,100])
+xline(wn,'--r','LineWidth',1)
+xline(wn_sh(end),'b--','LineWidth',1)
+legend("Skyhook control","passive damping","w_n",'w_n sh')
+subplot(2,1,2)
+semilogx(w,phi_sh(:),'LineWidth',1)
+hold on 
+semilogx(w,phi(:),'LineWidth',1)
+grid on
+hold on
+xline(wn,'r--','LineWidth',1)
+xline(wn_sh(end),'b--','LineWidth',1)
+legend("Skyhook","passive damping","w_n",'w_n sh')
+ylabel('Phase angle(Degrees)')
+xlabel('Frequency(rad/s)')
+%%
+%comparison with excitations
+excA_resp_sh = lsim(SH_ctrl,excA,time);
+figure
+plot(time,excA_resp_sh);
+grid on
+hold on
+plot(time,excA_resp,'--')
+legend("PID","passive")
+title("response to Excitation A (sinusoid)")
+xlabel("Time [s]")
+ylabel("$z_p$ Amplitude",'Interpreter','latex')
+
+
+excB_resp_sh = lsim(SH_ctrl,excB,time);
+figure
+plot(time,excB_resp_sh);
+grid on
+hold on
+plot(time,excB_resp,'--')
+legend("PID","passive")
+title("response to Excitation B (impulse)")
+xlabel("Time [s]")
+ylabel("$z_p$ Amplitude",'Interpreter','latex')
+
+
+
+s = j*w_range; % complex pulsation vector
+% compute transfer function modulus 
+SH_mod = abs(kp./(mp*s.^2+T*s+kp));
+% PSD out 
+PSD_excC_resp_sh = (SH_mod.^2).*PSD_excC; 
 figure
 semilogy(w_range,PSD_excC_resp_sh);
 grid on
@@ -414,3 +494,112 @@ xlabel("w range [rad/s]")
 ylabel("PSD Power Spectral Density")
 
 
+%step response
+y_sh = step(SH_ctrl,time)
+figure
+plot(time,y_sh)
+grid on
+title("step response for PID controlled system")
+
+
+
+%% Summary PD,PID, Skyhook
+figure
+loglog(w,A(:),'LineWidth',1) %passive damped
+hold on
+loglog(w,A_PD_sh(:),'LineWidth',1); %PD
+hold on
+loglog(w,A_PID_sh(:),'LineWidth',1); %PID
+hold on
+loglog(w,A_sh(:),'LineWidth',1); % skyhook
+legend("passive","PD","PID","Skyhook")
+grid on
+xlabel("frequency [rad/s]")
+ylabel("amplitude")
+
+%% Task 6.1
+s = tf('s');
+mp = 0.16;
+cp = 0.8;
+kp = 6.32;
+ms = 0.16;
+cs = 0.05;
+ks = 0.0632;
+
+num = (cp*s+kp)*(ms*s^2+cs*s+ks);
+den = (mp*s^2+(cp+cs)*s+(kp+ks))*(ms*s^2+cs*s+ks)-(cs*s+ks)^2
+dof2_pas = num/den;
+[wn_dof2,r_dof2] = damp(dof2_pas);
+
+w=logspace(0,3,100040); %Define frequency range
+[A_dof2_pas,phi_dof2_pas]=bode(dof2_pas,w); %Amplitude ratio (A) and phase shift (phi)
+figure
+subplot(2,1,1)
+loglog(w,A_dof2_pas(:),'LineWidth',1) %Amplitude ratio vs frequency
+grid on
+ylabel('Magnitude')
+ylim([0.01,10])
+xlim([1,1000])
+xline(wn_dof2,'--r','LineWidth',1)
+legend("2 dof passive","wn")
+subplot(2,1,2)
+semilogx(w,phi_dof2_pas(:),'LineWidth',1)
+xlim([1,1000])
+grid on
+hold on
+xline(wn_dof2,'r--','LineWidth',1)
+legend("2 dof passive","wn")
+ylabel('Phase angle(Degrees)')
+xlabel('Frequency(rad/s)')
+sgtitle("2 dof ")
+
+%% 
+excA_resp_dof2 = lsim(dof2_pas,excA,time);
+figure
+plot(time,excA_resp_dof2);
+grid on
+hold on
+plot(time,excA,'--')
+legend("2 dof","excitation")
+title("response to Excitation A (sinusoid)")
+xlabel("Time [s]")
+ylabel("$z_p$ Amplitude",'Interpreter','latex')
+
+
+excB_resp_dof2 = lsim(dof2_pas,excB,time);
+figure
+plot(time,excB_resp_dof2);
+grid on
+hold on
+plot(time,excB,'--')
+legend("2 dof","excitation")
+title("response to Excitation B (impulse)")
+xlabel("Time [s]")
+ylabel("$z_p$ Amplitude",'Interpreter','latex')
+
+
+
+s = j*w_range; % complex pulsation vector
+% compute transfer function modulus 
+dof2_pas_mod = abs(((cp*s+kp)*(ms*s.^2+cs.*s+ks))./((mp*s.^2+(cp+cs)*s+(kp+ks))*(ms*s.^2+cs*s+ks)-(cs*s+ks).^2));
+
+
+% PSD out 
+PSD_excC_resp_dof2 = (dof2_pas_mod.^2).*PSD_excC; 
+figure
+semilogy(w_range,PSD_excC_resp_dof2);
+grid on
+hold on
+semilogy(w_range,PSD_excC,'--')
+legend("2 dof","excitation")
+title("response to Excitation C (PSD)")
+xlabel("w range [rad/s]")
+ylabel("PSD Power Spectral Density")
+
+
+%step response
+y_sh = step(SH_ctrl,time)
+figure
+plot(time,y_sh)
+grid on
+title("step response for PID controlled system")
