@@ -13,7 +13,7 @@ r = cp/(2*sqrt(kp*mp));
 %% Basic excitations
 %excitation a -simulink
 %excition b - simulink
-out  = sim('excitations','StartTime','0','StopTime','20','FixedStep','0.01');;
+out  = sim('excitations','StartTime','0','StopTime','20','FixedStep','0.01');
 
 excA = out.excA.signals.values;
 excB = out.excB.signals.values;
@@ -581,7 +581,7 @@ ylabel("$z_p$ Amplitude",'Interpreter','latex')
 
 s = j*w_range; % complex pulsation vector
 % compute transfer function modulus 
-dof2_pas_mod = abs(((cp*s+kp)*(ms*s.^2+cs.*s+ks))./((mp*s.^2+(cp+cs)*s+(kp+ks))*(ms*s.^2+cs*s+ks)-(cs*s+ks).^2));
+dof2_pas_mod = abs(((cp*s+kp).*(ms*s.^2+cs.*s+ks))./((mp*s.^2+(cp+cs)*s+(kp+ks)).*(ms*s.^2+cs*s+ks)-(cs*s+ks).^2));
 
 
 % PSD out 
@@ -603,3 +603,90 @@ figure
 plot(time,y_sh)
 grid on
 title("step response for PID controlled system")
+%% Task 6.3
+figure
+subplot(2,1,1)
+loglog(w,A(:),'LineWidth',1);
+hold on
+loglog(w,A_dof2_pas(:),'LineWidth',1);
+grid on
+hold on
+xline(wn,'b--')
+hold on
+xline(wn_dof2,'r--')
+legend("1 dof","2 dof","wn 1dof","wn 2dof");
+ylim([0.01,10])
+xlim([1,1000])
+subplot(2,1,2)
+semilogx(w,phi(:),'LineWidth',1);
+hold on
+semilogx(w,phi_dof2_pas(:),'LineWidth',1);
+xlim([1,1000])
+grid on
+hold on
+xline(wn,'b--')
+hold on
+xline(wn_dof2,'r--')
+legend("1 dof","2 dof","wn 1dof","wn 2dof");
+%% Task 6.4
+T = 0;
+A_ss = [ 0 1 0 0;
+      -ks/mp -T/mp ks/ms 0;
+      0 0 0 1;
+      ks/mp T/mp -(kp-ks)/mp -cp/mp];
+B_ss = [0 0;
+     0 0;
+     0 0;
+     kp/ms cp/ms];
+C_ss = [1 0 0 0];
+D_ss = [0 0];
+SH_2dof_ss = ss(A_ss,B_ss,C_ss,D_ss)
+SH_2dof = tf(SH_2dof_ss);
+
+
+%bode of the skyhook controller with 2 dof
+[A_2dof_sh,phi_2dof_sh]=bode(SH_2dof(1),w); %Amplitude ratio (A) and phase shift (phi)
+figure
+subplot(2,1,1)
+loglog(w,A_2dof_sh(:),'LineWidth',1) %Amplitude ratio vs frequency
+grid on
+hold on
+loglog(w,A_dof2_pas(:),'LineWidth',1)
+ylabel('Magnitude')
+xlim([1,1000])
+legend("sh 2dof","2 dof pas")
+xline(wn,'--r','LineWidth',1)
+subplot(2,1,2)
+semilogx(w,phi_2dof_sh(:),'LineWidth',1)
+hold on
+semilogx(w,phi_dof2_pas(:),'LineWidth',1)
+grid on
+hold on
+legend("sh 2dof","2 dof pas")
+xline(wn,'r--','LineWidth',1)
+ylabel('Phase angle(Degrees)')
+xlabel('Frequency(rad/s)')
+
+
+out2 = sim("SS_task6_5",'StartTime','0','StopTime','20','FixedStep','0.01');
+excA_resp_dof2_sh = out2.zs_2dof_excA;
+excB_resp_dof2_sh = out2.zs_2dof_excB;
+
+figure
+plot(time,excA_resp_dof2_sh);
+hold on
+plot(time,excA_resp_dof2);
+grid on
+legend("2dof  sh","2dof pas")
+title("2 dof passive system response")
+
+figure
+plot(time,excB_resp_dof2_sh);
+hold on
+plot(time,excB_resp_dof2);
+grid on
+legend("2dof sh","2dof pas")
+title("2 dof passive system response")
+
+
+
