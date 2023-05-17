@@ -526,7 +526,8 @@ ms = 0.16;
 cs = 0.05;
 ks = 0.0632;
 
-num = (cp*s+kp)*(ms*s^2+cs*s+ks);
+%num = (cp*s+kp)*(ms*s^2+cs*s+ks);
+num = (s*cp+kp)*(s*cs+ks);
 den = (mp*s^2+(cp+cs)*s+(kp+ks))*(ms*s^2+cs*s+ks)-(cs*s+ks)^2
 dof2_pas = num/den;
 [wn_dof2,r_dof2] = damp(dof2_pas);
@@ -538,7 +539,8 @@ subplot(2,1,1)
 loglog(w,A_dof2_pas(:),'LineWidth',1) %Amplitude ratio vs frequency
 grid on
 ylabel('Magnitude')
-ylim([0.01,10])
+xlim([0.01,1000])
+
 
 xline(wn_dof2,'--r','LineWidth',1)
 legend("2 dof passive","wn")
@@ -627,7 +629,7 @@ hold on
 xline(wn_dof2,'r--')
 legend("1 dof","2 dof","wn 1dof","wn 2dof");
 %% Task 6.4
-T = 2;
+T = 0.3;
 A_ss = [ 0 1 0 0;
       -ks/mp -T/mp ks/ms 0;
       0 0 0 1;
@@ -640,7 +642,7 @@ C_ss = [1 0 0 0];
 D_ss = [0 0];
 SH_2dof_ss = ss(A_ss,B_ss,C_ss,D_ss)
 SH_2dof = tf(SH_2dof_ss);
-[wn_dof2_sh,r_dof2_sh] = damp(SH)
+[wn_dof2_sh,r_dof2_sh] = damp(SH_2dof_ss)
 
 
 
@@ -654,9 +656,9 @@ hold on
 loglog(w,A_dof2_pas(:),'LineWidth',1)
 ylabel('Magnitude')
 hold on
-xline(wn_dof2(1),'r--','LineWidth',1)
+xline(wn_dof2_sh(1),'r--','LineWidth',1)
 hold on
-xline(wn_dof2(3),'o--','LineWidth',1)
+xline(wn_dof2_sh(3),'o--','LineWidth',1)
 legend("sh 2dof","2 dof pas","wn Zs","wn zp")
 
 subplot(2,1,2)
