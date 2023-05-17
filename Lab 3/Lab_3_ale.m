@@ -43,14 +43,14 @@ s = tf('s');
 Zp_Zw = (1+2*r/wn*s)/(s^2/wn^2+2*r/wn*s+1);
 
 
-w=logspace(0,3,100040); %Define frequency range
+w=logspace(-2,3,2*100040);; %Define frequency range
 [A,phi]=bode(Zp_Zw,w); %Amplitude ratio (A) and phase shift (phi)
 figure
 subplot(2,1,1)
 loglog(w,A(:),'LineWidth',1) %Amplitude ratio vs frequency
 grid on
 ylabel('Magnitude')
-xlim([1,1000])
+
 ylim([0.01,100])
 xline(wn,'--r','LineWidth',1)
 subplot(2,1,2)
@@ -77,7 +77,7 @@ subplot(2,1,1)
 loglog(w,A_undamped(:),'LineWidth',1) %Amplitude ratio vs frequency
 grid on
 ylabel('Magnitude')
-xlim([1,1000])
+
 ylim([0.01,1000])
 xline(wn,'--r','LineWidth',1)
 subplot(2,1,2)
@@ -166,7 +166,7 @@ dd = cp;
 dp = 0;
 PD_sh = (kp/mp)/(s^2 +dd/mp*s +(kp+dp)/mp);
 
-w=logspace(0,3,100040); %Define frequency range
+%w=logspace(0,3,100040); %Define frequency range
 [A_PD_sh,phi_PD_sh]=bode(PD_sh,w); %Amplitude ratio (A) and phase shift (phi)
 figure
 subplot(2,1,1)
@@ -175,7 +175,7 @@ hold on
 loglog(w,A(:),'LineWidth',1) %Amplitude ratio vs frequency
 grid on
 ylabel('Magnitude')
-xlim([1,1000])
+
 ylim([0.01,100])
 xline(wn,'--r','LineWidth',1)
 legend("PD Skyhook","passive damping","w_n")
@@ -202,7 +202,7 @@ PD_sh = (kp/mp)/(s^2 +dd/mp*s +(kp+dp)/mp);
 [wn_pd,r_pd] = damp(PD_sh);
 
 %
-w=logspace(0,3,100040); %Define frequency range
+%w=logspace(0,3,100040); %Define frequency range
 [A_PD_sh,phi_PD_sh]=bode(PD_sh,w); %Amplitude ratio (A) and phase shift (phi)
 figure
 subplot(2,1,1)
@@ -211,7 +211,7 @@ hold on
 loglog(w,A(:),'LineWidth',1) %Amplitude ratio vs frequency
 grid on
 ylabel('Magnitude')
-xlim([1,1000])
+
 ylim([0.01,100])
 xline(wn,'--r','LineWidth',1)
 xline(wn_pd,'--b','LineWidth',1)
@@ -276,10 +276,10 @@ dd_crit = 2*wn*mp;
 PD_sh_crit = (kp/mp)/(s^2 +dd_crit/mp*s +(kp+dp)/mp);
 [wn_pd_crit,r_pd_crit] = damp(PD_sh_crit);
 r_Pd_sh_crit = dd_crit/(2*sqrt((kp+dp)*mp));
-w=logspace(0,3,100040); %Define frequency range
+%w=logspace(0,3,100040); %Define frequency range
 [A_PD_sh_crit,phi_PD_sh_crit]=bode(PD_sh_crit,w); %Amplitude ratio (A) and phase shift (phi
 
-w=logspace(0,3,100040); %Define frequency range
+%w=logspace(0,3,100040); %Define frequency range
 [A_PD_sh,phi_PD_sh]=bode(PD_sh,w); %Amplitude ratio (A) and phase shift (phi)
 figure
 subplot(2,1,1)
@@ -289,7 +289,7 @@ loglog(w,A(:),'LineWidth',1) %Amplitude ratio vs frequency
 loglog(w,A_PD_sh_crit(:),'LineWidth',1) %Amplitude ratio vs frequency
 grid on
 ylabel('Magnitude')
-xlim([1,1000])
+
 ylim([0.01,100])
 xline(wn,'--r','LineWidth',1)
 xline(wn_pd_crit,'--b','LineWidth',1)
@@ -343,7 +343,7 @@ hi =0.9* wn^2*cp;
 %wn_pid = (kp+;
 PID_sh = (kp)/(s^2*mp + s*hd + (kp+hp)+hi/s);
 [wn_pid,r_pid] = damp(PID_sh)
-w=logspace(0,3,100040); %Define frequency range
+%w=logspace(0,3,100040); %Define frequency range
 [A_PID_sh,phi_PID_sh]=bode(PID_sh,w); %Amplitude ratio (A) and phase shift (phi)
 figure
 subplot(2,1,1)
@@ -426,7 +426,7 @@ s = tf('s')
 T = 3*cp;
 SH_ctrl = kp/(mp*s^2+T*s+kp);
 [wn_sh,r_sh] = damp(SH_ctrl);
-w=logspace(0,3,100040); %Define frequency range
+%w=logspace(0,3,100040); %Define frequency range
 [A_sh,phi_sh]=bode(SH_ctrl,w); %Amplitude ratio (A) and phase shift (phi)
 figure
 subplot(2,1,1)
@@ -435,7 +435,7 @@ hold on
 loglog(w,A(:),'LineWidth',1) %Amplitude ratio vs frequency
 grid on
 ylabel('Magnitude')
-xlim([1,1000])
+
 ylim([0.01,100])
 xline(wn,'--r','LineWidth',1)
 xline(wn_sh(end),'b--','LineWidth',1)
@@ -531,7 +531,7 @@ den = (mp*s^2+(cp+cs)*s+(kp+ks))*(ms*s^2+cs*s+ks)-(cs*s+ks)^2
 dof2_pas = num/den;
 [wn_dof2,r_dof2] = damp(dof2_pas);
 
-w=logspace(0,3,100040); %Define frequency range
+w=logspace(-2,3,2*100040);; %Define frequency range
 [A_dof2_pas,phi_dof2_pas]=bode(dof2_pas,w); %Amplitude ratio (A) and phase shift (phi)
 figure
 subplot(2,1,1)
@@ -539,12 +539,12 @@ loglog(w,A_dof2_pas(:),'LineWidth',1) %Amplitude ratio vs frequency
 grid on
 ylabel('Magnitude')
 ylim([0.01,10])
-xlim([1,1000])
+
 xline(wn_dof2,'--r','LineWidth',1)
 legend("2 dof passive","wn")
 subplot(2,1,2)
 semilogx(w,phi_dof2_pas(:),'LineWidth',1)
-xlim([1,1000])
+
 grid on
 hold on
 xline(wn_dof2,'r--','LineWidth',1)
@@ -598,11 +598,11 @@ ylabel("PSD Power Spectral Density")
 
 
 %step response
-y_sh = step(SH_ctrl,time)
+y_sh = step(dof2_pas,time)
 figure
 plot(time,y_sh)
 grid on
-title("step response for PID controlled system")
+title("step response for 2dof passive system")
 %% Task 6.3
 figure
 subplot(2,1,1)
@@ -616,12 +616,10 @@ hold on
 xline(wn_dof2,'r--')
 legend("1 dof","2 dof","wn 1dof","wn 2dof");
 ylim([0.01,10])
-xlim([1,1000])
 subplot(2,1,2)
 semilogx(w,phi(:),'LineWidth',1);
 hold on
 semilogx(w,phi_dof2_pas(:),'LineWidth',1);
-xlim([1,1000])
 grid on
 hold on
 xline(wn,'b--')
@@ -629,11 +627,11 @@ hold on
 xline(wn_dof2,'r--')
 legend("1 dof","2 dof","wn 1dof","wn 2dof");
 %% Task 6.4
-T = 0;
+T = 2;
 A_ss = [ 0 1 0 0;
       -ks/mp -T/mp ks/ms 0;
       0 0 0 1;
-      ks/mp T/mp -(kp-ks)/mp -cp/mp];
+      ks/mp T/mp -(kp+ks)/mp -cp/mp];
 B_ss = [0 0;
      0 0;
      0 0;
@@ -642,6 +640,8 @@ C_ss = [1 0 0 0];
 D_ss = [0 0];
 SH_2dof_ss = ss(A_ss,B_ss,C_ss,D_ss)
 SH_2dof = tf(SH_2dof_ss);
+[wn_dof2_sh,r_dof2_sh] = damp(SH)
+
 
 
 %bode of the skyhook controller with 2 dof
@@ -653,17 +653,22 @@ grid on
 hold on
 loglog(w,A_dof2_pas(:),'LineWidth',1)
 ylabel('Magnitude')
-xlim([1,1000])
-legend("sh 2dof","2 dof pas")
-xline(wn,'--r','LineWidth',1)
+hold on
+xline(wn_dof2(1),'r--','LineWidth',1)
+hold on
+xline(wn_dof2(3),'o--','LineWidth',1)
+legend("sh 2dof","2 dof pas","wn Zs","wn zp")
+
 subplot(2,1,2)
 semilogx(w,phi_2dof_sh(:),'LineWidth',1)
 hold on
 semilogx(w,phi_dof2_pas(:),'LineWidth',1)
 grid on
 hold on
-legend("sh 2dof","2 dof pas")
-xline(wn,'r--','LineWidth',1)
+xline(wn_dof2(1),'r--','LineWidth',1)
+hold on
+xline(wn_dof2(3),'o--','LineWidth',1)
+legend("sh 2dof","2 dof pas","wn Zs","wn zp")
 ylabel('Phase angle(Degrees)')
 xlabel('Frequency(rad/s)')
 
@@ -687,6 +692,9 @@ plot(time,excB_resp_dof2);
 grid on
 legend("2dof sh","2dof pas")
 title("2 dof passive system response")
+
+
+
 
 
 
