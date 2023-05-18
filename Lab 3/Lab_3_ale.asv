@@ -70,7 +70,7 @@ cp_und = 0;
 wn = sqrt(kp/mp);
 r_undamped = cp_und/(2*sqrt(kp*mp));
 Zp_Zw_undamped = (1+2*r_undamped/wn*s)/(s^2/wn^2+2*r_undamped/wn*s+1)
-[wn_undamped,r_undamped] = damp(Zp_Zw_undamped)
+
 %w=logspace(0,3); %Define frequency range
 [A_undamped,phi_undamped]=bode(Zp_Zw_undamped,w); %Amplitude ratio (A) and phase shift (phi)
 figure
@@ -78,8 +78,7 @@ subplot(2,1,1)
 loglog(w,A_undamped(:),'LineWidth',1) %Amplitude ratio vs frequency
 grid on
 ylabel('Magnitude')
-
-xlim([0.01,1000])
+Xlim([0.01,1000])
 xline(wn,'--r','LineWidth',1)
 subplot(2,1,2)
 semilogx(w,phi_undamped(:),'LineWidth',1)
