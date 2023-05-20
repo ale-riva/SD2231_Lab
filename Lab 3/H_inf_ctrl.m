@@ -36,8 +36,11 @@ Wa2=Wa1;
 
 %For penalizing bounce and pitch motions
 eps=1;
-wnb=???;            %Find the right equation or value for wnb
-wnchi=???;          %Find the right equation or value for wnchi
+e = eig(Ask);   % Outputs the eigenvalues for the state space
+disp(e)
+%%
+wnb=7.3855;            %Find the right equation or value for wnb
+wnchi=7.8558;          %Find the right equation or value for wnchi
 s1b=-eps+1i*sqrt(wnb^2-eps^2);
 s2b=-eps-1i*sqrt(wnb^2-eps^2);
 s1chi=-eps+1i*sqrt(wnchi^2-eps^2);

@@ -43,7 +43,7 @@ s = tf('s');
 Zp_Zw = (1+2*r/wn*s)/(s^2/wn^2+2*r/wn*s+1);
 
 
-w=logspace(-2,3,2*100040);; %Define frequency range
+w=logspace(-2,3,2*100040); %Define frequency range
 [A,phi]=bode(Zp_Zw,w); %Amplitude ratio (A) and phase shift (phi)
 figure
 subplot(2,1,1)
@@ -337,20 +337,24 @@ xlim([0,4])
 title("check for critically damped active system")
 %% Task 3.1 PID
 close all
-s = tf('s')
-hd = cp;
+s = tf('s');
+% hd = cp;
+% hp = 0;
+% hi =0.9* wn^2*cp;
 hp = 0;
-hi =0.9* wn^2*cp;
+hi = 0.2;
+hd = 1.5;
 %wn_pid = (kp+;
 PID_sh = (kp)/(s^2*mp + s*hd + (kp+hp)+hi/s);
+[num,den] = tfdata(PID_sh,'v');
 [wn_pid,r_pid] = damp(PID_sh)
-%w=logspace(0,3,100040); %Define frequency range
+% w=logspace(0,3,100040); %Define frequency range
 [A_PID_sh,phi_PID_sh]=bode(PID_sh,w); %Amplitude ratio (A) and phase shift (phi)
 figure
 subplot(2,1,1)
 loglog(w,A_PID_sh(:),'LineWidth',1) %Amplitude ratio vs frequency
 hold on
-loglog(w,A(:),'LineWidth',1) %Amplitude ratio vs frequency
+% loglog(w,A(:),'LineWidth',1) %Amplitude ratio vs frequency
 grid on
 ylabel('Magnitude')
 xlim([1,1000])
@@ -361,7 +365,7 @@ legend("PID Skyhook","passive damping","w_n",'w_n PID')
 subplot(2,1,2)
 semilogx(w,phi_PID_sh(:),'LineWidth',1)
 hold on 
-semilogx(w,phi(:),'LineWidth',1)
+% semilogx(w,phi(:),'LineWidth',1)
 grid on
 hold on
 xline(wn,'r--','LineWidth',1)
@@ -427,7 +431,7 @@ s = tf('s')
 T = 3*cp;
 SH_ctrl = kp/(mp*s^2+T*s+kp);
 [wn_sh,r_sh] = damp(SH_ctrl);
-%w=logspace(0,3,100040); %Define frequency range
+w=logspace(0,3,100040); %Define frequency range
 [A_sh,phi_sh]=bode(SH_ctrl,w); %Amplitude ratio (A) and phase shift (phi)
 figure
 subplot(2,1,1)
