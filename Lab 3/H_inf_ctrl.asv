@@ -36,7 +36,7 @@ Wa2=Wa1;
 
 %For penalizing bounce and pitch motions
 eps=1;
-wn = eig(Ask);         %Outputs the eigenvalues/natural frequencies
+wn = eig(Ask);         % 
 wnb=7.3855;            %Find the right equation or value for wnb
 wnchi=7.8558;          %Find the right equation or value for wnchi
 s1b=-eps+1i*sqrt(wnb^2-eps^2);
