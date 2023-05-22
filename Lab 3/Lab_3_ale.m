@@ -596,7 +596,7 @@ dof2_und = num_und/den_und;
 [wn_und_dof2,r_und_dof2] = damp(dof2_und)
 wn_und_dof2 = [wn_und_dof2(1);wn_und_dof2(3)];
 
-
+%% Task 6.2
 w=logspace(-2,3,2*100040); %Define frequency range
 [A_dof2_und,phi_dof2_und]=bode(dof2_und,w); %Amplitude ratio (A) and phase shift (phi)
 
@@ -620,7 +620,7 @@ ylabel('Phase angle(Degrees)')
 xlabel('Frequency(rad/s)')
 sgtitle("2 dof passive")
 
-%% 
+
 excA_resp_dof2 = lsim(dof2_pas,excA,time);
 figure
 plot(time,excA_resp_dof2);
@@ -690,9 +690,9 @@ hold on
 semilogx(w,phi_dof2_pas(:),'LineWidth',1);
 grid on
 hold on
-xline(wn_und_1dof,'b--')
+xline(wn_und_dof2,'b--')
 hold on
-xline(wn_dof2,'r--')
+xline(wn_und_1dof,'r--')
 legend("1 dof","2 dof","wn 1dof","wn 2dof");
 sgtitle("Passive 1dof vs Passive 2dof")
 
@@ -723,6 +723,7 @@ D_ss = [0 0 0];
 
 %inputs [F; zw ;zw_dot]
 T = 1.5;
+%just used as a check of the close loop in simulink
 A_cl = [ 0 1 0 0;
       -ks/mp -T/ms ks/ms 0;
       0 0 0 1;
@@ -733,13 +734,8 @@ B_cl = [ 0 0;
          kp/mp cp/mp];
 C_cl = [1 0 0 0];
 D_cl = [0 0];
-
-
-
 SH_2dof_cl = ss(A_cl,B_cl,C_cl,D_cl)
 SH_2dof = tf(SH_2dof_cl);
-[wn_dof2_sh,r_dof2_sh] = damp(SH_2dof_cl);
-
 
 %bode of the skyhook controller with 2 dof
 [A_2dof_sh,phi_2dof_sh]=bode(SH_2dof(1),w); %Amplitude ratio (A) and phase shift (phi)
@@ -755,9 +751,7 @@ xline(wn_dof2_sh(1),'r--','LineWidth',1)
 hold on
 xline(wn_dof2_sh(3),'o--','LineWidth',1)
 hold on
-xline(wn_dof2(1),'-.r','LineWidth',1)
-hold on
-xline(wn_dof2(3),'-.o','LineWidth',1)
+xline(wn_und_dof2,'-.r','LineWidth',1)
 legend("sh 2dof","2 dof pas","SH wn Zs","SH wn zp","PAS wn Zs","PAs wn zp")
 
 
@@ -771,15 +765,15 @@ xline(wn_dof2_sh(1),'r--','LineWidth',1)
 hold on
 xline(wn_dof2_sh(3),'o--','LineWidth',1)
 hold on
-xline(wn_dof2(1),'-.r','LineWidth',1)
+%xline(wn_dof2(1),'-.r','LineWidth',1)
 hold on
-xline(wn_dof2(3),'-.o','LineWidth',1)
+%xline(wn_dof2(3),'-.o','LineWidth',1)
 legend("sh 2dof","2 dof pas","SH wn Zs","SH wn zp","PAS wn Zs","PAs wn zp")
 ylabel('Phase angle(Degrees)')
 xlabel('Frequency(rad/s)')
 sgtitle("Skyhook vs Passive for 2dof")
 
-
+%% Task 6.5
 out2 = sim("SS_task6_5",'StartTime','0','StopTime','20','FixedStep','0.01');
 time = out2.tout;
 excA_resp_dof2_sh = out2.zs_2dof_excA;
@@ -800,6 +794,7 @@ plot(time,excB_resp_dof2);
 grid on
 legend("2dof sh","2dof pas")
 title("excB resp Skyhook vs Passive 2dof")
+%% Task 7.1 
 
 
 %% Task 8.1 
