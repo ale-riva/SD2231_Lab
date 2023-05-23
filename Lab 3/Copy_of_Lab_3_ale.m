@@ -10,6 +10,8 @@ kp = 6.32; %spring coeff
 wn_und_1dof = sqrt(kp/mp);
 r_1dof = cp/(2*sqrt(kp*mp));
 
+wn = wn_und_1dof;
+
 %% Basic excitations
 %excitation a -simulink
 %excition b - simulink
@@ -44,7 +46,6 @@ Zp_Zw = (s*cp+kp)/(s^2*mp+s*cp+kp);
 [peak_mag,wn_damp_1dof] = getPeakGain(Zp_Zw);
 
 cp_und = 0;
-wn = sqrt(kp/mp);
 r_undamped = cp_und/(2*sqrt(kp*mp));
 Zp_Zw_undamped = (1+2*r_undamped/wn*s)/(s^2/wn^2+2*r_undamped/wn*s+1)
 w=logspace(-2,3,2*100040); %Define frequency range
@@ -223,10 +224,10 @@ PD_tf = (kp/mp)/(s^2 +dd/mp*s +(kp+dp)/mp);
 %r_Pd_sh = dd/(2*sqrt(kp*mp))
 %To check that system is still underdamped and that wn is unchanged
 %[wn_pd,r_pd] = damp(PD_tf);
-%wn_und_pd = NatUndFreq(PD_tf)
+
 
 %
-%w=logspace(0,3,100040); %Define frequency range
+w=logspace(-2,3,100040); %Define frequency range
 [A_PD,phi_PD]=bode(PD_tf,w); %Amplitude ratio (A) and phase shift (phi)
 figure
 subplot(2,1,1)
@@ -281,7 +282,7 @@ ylabel("$z_p$ Amplitude",'Interpreter','latex')
 
 s = j*w_range; % complex pulsation vector
 % compute transfer function modulus 
-PD_tf_mod = abs((kp/mp)./(s.^2 +dd/mp*s +(kp+dp)/mp));
+PD_tf_mod = abs((kp/mp)./(s.^2 +dd/mp.*s +(kp+dp)/mp));
 % PSD out 
 PSD_excC_resp_pd = (PD_tf_mod.^2).*PSD_excC; 
 figure
@@ -366,7 +367,7 @@ title("check for critically damped active system")
 s = tf('s');
 hd = 1.5;%cp;
 hp = 0;
-hi = 0.2; %hd*(kp+hp)/mp;
+hi = 0; %hd*(kp+hp)/mp;
 PID_tf = (kp*s)/(s^3*mp + s^2*hd + (kp+hp)*s+hi);
 
 hd_und = 0;
@@ -456,7 +457,11 @@ s = tf('s')
 T = 3*cp;
 SH_ctrl = kp/(mp*s^2+T*s+kp);
 %[wn_sh,r_sh] = damp(SH_ctrl);
-wn_und_sh = NatUndFreq(SH_ctrl);
+SH_und_ctrl = kp/(mp*s^2+kp);
+[peak_mag,wn_und_sh] = getPeakGain(SH_und_ctrl);
+
+
+
 %w=logspace(0,3,100040); %Define frequency range
 [A_sh,phi_sh]=bode(SH_ctrl,w); %Amplitude ratio (A) and phase shift (phi)
 figure
@@ -581,18 +586,21 @@ ks = 0.0632;
 num = (s*cp+kp)*(s*cs+ks);
 den = (mp*s^2+(cp+cs)*s+(kp+ks))*(ms*s^2+cs*s+ks)-(cs*s+ks)^2
 dof2_pas = num/den;
-[wn_dof2,r_dof2] = damp(dof2_pas);s
-wn_dof2 = [wn_dof2(1);wn_dof2(3)];
+
+% [wn_dof2,r_dof2] = damp(dof2_pas);
+% wn_dof2 = [wn_dof2(1);wn_dof2(3)];
 
 cp_und = 0;cs_und = 0;
 num_und = (s*cp_und+kp)*(s*cs_und+ks);
 den_und = (mp*s^2+(cp_und+cs_und)*s+(kp+ks))*(ms*s^2+cs_und*s+ks)-(cs_und*s+ks)^2
 dof2_und = num_und/den_und;
-[wn_dof2_und,r_dof2_und] = damp(dof2_und)
-wn_dof2_und = [wn_dof2_und(1);wn_dof2_und(3)]
+[wn_und_dof2,r_und_dof2] = damp(dof2_und)
+wn_und_dof2 = [wn_und_dof2(1);wn_und_dof2(3)];
 
-
+%% Task 6.2
 w=logspace(-2,3,2*100040); %Define frequency range
+[A_dof2_und,phi_dof2_und]=bode(dof2_und,w); %Amplitude ratio (A) and phase shift (phi)
+
 [A_dof2_pas,phi_dof2_pas]=bode(dof2_pas,w); %Amplitude ratio (A) and phase shift (phi)
 figure
 subplot(2,1,1)
@@ -600,20 +608,20 @@ loglog(w,A_dof2_pas(:),'LineWidth',1) %Amplitude ratio vs frequency
 grid on
 ylabel('Magnitude')
 xlim([0.01,1000])
-xline(wn_dof2_und,'--r','LineWidth',1)
-legend("2 dof passive","wn")
+xline(wn_und_dof2,'--r','LineWidth',1)
+legend("2 dof passive","wn und 2dof")
 
 subplot(2,1,2)
 semilogx(w,phi_dof2_pas(:),'LineWidth',1)
 grid on
 hold on
-xline(wn_dof2_und,'r--','LineWidth',1)
-legend("2 dof passive","wn")
+xline(wn_und_dof2,'r--','LineWidth',1)
+legend("2 dof passive","wn und 2dof")
 ylabel('Phase angle(Degrees)')
 xlabel('Frequency(rad/s)')
 sgtitle("2 dof passive")
 
-%% 
+
 excA_resp_dof2 = lsim(dof2_pas,excA,time);
 figure
 plot(time,excA_resp_dof2);
@@ -672,9 +680,9 @@ hold on
 loglog(w,A_dof2_pas(:),'LineWidth',1);
 grid on
 hold on
-xline(wn,'b--')
+xline(wn_und_dof2,'b--')
 hold on
-xline(wn_dof2,'r--')
+xline(wn_und_1dof,'r--')
 legend("1 dof","2 dof","wn 1dof","wn 2dof");
 
 subplot(2,1,2)
@@ -683,9 +691,9 @@ hold on
 semilogx(w,phi_dof2_pas(:),'LineWidth',1);
 grid on
 hold on
-xline(wn,'b--')
+xline(wn_und_dof2,'b--')
 hold on
-xline(wn_dof2,'r--')
+xline(wn_und_1dof,'r--')
 legend("1 dof","2 dof","wn 1dof","wn 2dof");
 sgtitle("Passive 1dof vs Passive 2dof")
 
@@ -695,10 +703,12 @@ hold on
 loglog(w,A_dof2_pas(:),'LineWidth',1);
 grid on
 hold on
-xline(wn,'b--')
+xline(wn_und_1dof,'b--')
 hold on
-xline(wn_dof2,'r--')
+xline(wn_und_dof2,'r--')
 legend("1 dof","2 dof","wn 1dof","wn 2dof");
+xlim([0.1,100])
+xlabel("Frequency [rad/s]")
 %% Task 6.4
 
 A_ss = [ 0 1 0 0;
@@ -714,6 +724,7 @@ D_ss = [0 0 0];
 
 %inputs [F; zw ;zw_dot]
 T = 1.5;
+%just used as a check of the close loop in simulink
 A_cl = [ 0 1 0 0;
       -ks/mp -T/ms ks/ms 0;
       0 0 0 1;
@@ -724,13 +735,8 @@ B_cl = [ 0 0;
          kp/mp cp/mp];
 C_cl = [1 0 0 0];
 D_cl = [0 0];
-
-
-
 SH_2dof_cl = ss(A_cl,B_cl,C_cl,D_cl)
 SH_2dof = tf(SH_2dof_cl);
-[wn_dof2_sh,r_dof2_sh] = damp(SH_2dof_cl);
-
 
 %bode of the skyhook controller with 2 dof
 [A_2dof_sh,phi_2dof_sh]=bode(SH_2dof(1),w); %Amplitude ratio (A) and phase shift (phi)
@@ -746,9 +752,7 @@ xline(wn_dof2_sh(1),'r--','LineWidth',1)
 hold on
 xline(wn_dof2_sh(3),'o--','LineWidth',1)
 hold on
-xline(wn_dof2(1),'-.r','LineWidth',1)
-hold on
-xline(wn_dof2(3),'-.o','LineWidth',1)
+xline(wn_und_dof2,'-.r','LineWidth',1)
 legend("sh 2dof","2 dof pas","SH wn Zs","SH wn zp","PAS wn Zs","PAs wn zp")
 
 
@@ -762,15 +766,15 @@ xline(wn_dof2_sh(1),'r--','LineWidth',1)
 hold on
 xline(wn_dof2_sh(3),'o--','LineWidth',1)
 hold on
-xline(wn_dof2(1),'-.r','LineWidth',1)
+%xline(wn_dof2(1),'-.r','LineWidth',1)
 hold on
-xline(wn_dof2(3),'-.o','LineWidth',1)
+%xline(wn_dof2(3),'-.o','LineWidth',1)
 legend("sh 2dof","2 dof pas","SH wn Zs","SH wn zp","PAS wn Zs","PAs wn zp")
 ylabel('Phase angle(Degrees)')
 xlabel('Frequency(rad/s)')
 sgtitle("Skyhook vs Passive for 2dof")
 
-
+%% Task 6.5
 out2 = sim("SS_task6_5",'StartTime','0','StopTime','20','FixedStep','0.01');
 time = out2.tout;
 excA_resp_dof2_sh = out2.zs_2dof_excA;
@@ -791,6 +795,8 @@ plot(time,excB_resp_dof2);
 grid on
 legend("2dof sh","2dof pas")
 title("excB resp Skyhook vs Passive 2dof")
+%% Task 7.1 
+
 
 %% Task 8.1 
 m = 22000; J = 700000;
@@ -888,29 +894,4 @@ title("response of vehicle to EXC2 (8Hz)")
 legend("z","$\chi$",'Interpreter','latex')         
 xlim([0,10]);
 grid on
-
-%% function 
-function wn = NatUndFreq(sys_tf)
-    n_dof = size(sys_tf,2);
-    tmp = 0;
-    for idx=1:n_dof
-        pole_tf = pole(sys_tf(idx));
-        for p=1:size(pole_tf,1)
-            if imag(pole_tf(p)) ~= 0
-                tmp = tmp+1;
-                pole_complx(tmp) = pole_tf(p);
-            end
-        end
-
-        pole_complx = sort(pole_complx,"ascend");
-        coeff = poly(pole_complx);
-        wn(idx,1) = sqrt(coeff(end));
-%         t1 = (pole_check_complx(1)+pole_check_complx(2))/2;
-%         t2 = (pole_check_complx(2)-pole_check_complx(1))/2;
-%         wn(idx,1)= sqrt(-(t2^2-t1^2));
-        wn(idx,1);
-    
-    end
-
-end
 
