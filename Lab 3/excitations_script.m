@@ -1,7 +1,7 @@
 %% Basic excitations
 %excitation a -simulink
 %excition b - simulink
-out  = sim('excitations','StartTime','0','StopTime','20','FixedStep','0.01');
+out  = sim('excitations.slx','StartTime','0','StopTime','20','FixedStep','0.01');
 
 excA = out.excA.signals.values;
 excB = out.excB.signals.values;

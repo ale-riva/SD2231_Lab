@@ -34,7 +34,7 @@ D_ss_2dof_vh = [0 0 0 0; 0 0 0 0];
 veh_2dof_tf = tf(ss(A_ss_2dof_vh,B_ss_2dof_vh,C_ss_2dof_vh,D_ss_2dof_vh));
 veh_2dof_tf.InputName = ["z_{w1}"," z_{w1} dot","z_{w2}"," z_{w2} dot"];
 veh_2dof_tf.OutputName = ["zeta","chi"];
-out8_2 = sim("SS_task8_2",'StartTime','0','StopTime','20','FixedStep','0.01');
+out8_2 = sim("SS_task8_2.slx",'StartTime','0','StopTime','20','FixedStep','0.01');
 
 time = out8_2.tout;
 exc1_z_resp_2dof_vh = out8_2.z_exc1;
@@ -85,8 +85,6 @@ veh_2dof_tf.OutputName = ["zeta","chi"];
 %peak_indices=[peak_indices_z_zw1,peak_indices_chi_zw1]
 %nat_freq = w(peak_indices) % Natural frequencies
 
-
-
 tmp1 = reshape(A_veh_2dof(1,1,:),[],size(A_veh_2dof(1,1,:), 3));
 tmp2 = reshape(A_veh_2dof(2,1,:),[],size(A_veh_2dof(2,1,:), 3));
 
@@ -97,8 +95,30 @@ loglog(w,tmp2)
 grid on
 
 hold on
-xline(wn_und_vh(1))
+xline(1*2*pi)
 hold on
-xline(wn_und_vh(2))
+xline(8*2*pi)
 legend("z zw1","chi zw1","wn z","wn chi");
 
+tmp3 = reshape(A_veh_2dof(1,3,:),[],size(A_veh_2dof(1,1,:), 3));
+tmp4 = reshape(A_veh_2dof(2,3,:),[],size(A_veh_2dof(2,1,:), 3));
+
+figure
+loglog(w,tmp3)
+hold on
+loglog(w,tmp4)
+grid on
+
+hold on
+xline(1*2*pi)
+hold on
+xline(8*2*pi)
+legend("z zw2","chi zw2","wn z","wn chi");
+
+
+%% Task 9.1
+A_veh_sh = [0 1 0 0;
+           -2*k/m 0 0 0; 
+            0  0   0  1;
+            0  0   -2*k*L^2 0]
+B_veh_sh = [ ]
