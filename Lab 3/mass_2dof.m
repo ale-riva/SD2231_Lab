@@ -245,3 +245,5 @@ legend("2dof sh","2dof pas")
 title("excB resp Skyhook vs Passive 2dof")
 %% Task 7.1 
 %figures are already printed in section 6.5
+
+
