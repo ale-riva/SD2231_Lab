@@ -3,8 +3,8 @@
 s=tf('s');
 
 % systme parameters
-m=22000;   %kg
-j=700e3;   %kgm^2
+m=1.15*22000;   %kg
+j=1.15*700e3;   %kgm^2
 c=40e3;    %Ns/m
 k=2*300e3; %N/m
 L=6;       %m
@@ -62,7 +62,7 @@ Pe=minreal(Pe);%This syntax cancels pole-zero pairs in transfer
 [K,Pec,gamma,info]=hinfsyn(Pe,nmeas,ncont,'method','lmi'); % for working with the error
 [Ainf, Binf, Cinf, Dinf]=ssdata(K);
 %%
-out10 = sim("H_inf_2021",'StartTime','0','StopTime','20','FixedStep','0.01');
+out11_2 = sim("H_inf_2021",'StartTime','0','StopTime','20','FixedStep','0.01');
 
 %%
 %Now use the controller K in your simulation
