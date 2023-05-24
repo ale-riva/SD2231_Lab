@@ -1,9 +1,6 @@
 %% This is a Matlab file for designing H_infinity controller (assignment 3
 %% of SD2231)
 clear all
-close all
-clc
-
 s=tf('s');
 
 % systme parameters
@@ -37,65 +34,26 @@ Dsk=zeros(2,4);
 Wa1=(0.00175*s+1)/(0.00025*s+1);
 Wa2=Wa1;
 
-%bode plot of Weight functions of forces
-w=logspace(0,6,2*100040);
-[A_wa1,phi_wa1] = bode(Wa1,w);
-figure
-subplot(2,1,1)
-loglog(w,A_wa1(:))
-grid on
-subplot(2,1,2)
-semilogx(w,phi_wa1(:))
-grid on
-
-
-%%
-%frequency we should penalize the most-- the one corresponding to the peaks
-w_nat = abs(eig(Ask));
-
-
-
 %For penalizing bounce and pitch motions
 eps=1;
-wnb=w_nat(1);            %Find the right equation or value for wnb
-wnchi=w_nat(3);          %Find the right equation or value for wnchi
+wn = eig(Ask);         %Outputs the eigenvalues/natural frequencies
+wnb=7.3855;            %Find the right equation or value for wnb
+wnchi=7.8558;          %Find the right equation or value for wnchi
 s1b=-eps+1i*sqrt(wnb^2-eps^2);
 s2b=-eps-1i*sqrt(wnb^2-eps^2);
 s1chi=-eps+1i*sqrt(wnchi^2-eps^2);
 s2chi=-eps-1i*sqrt(wnchi^2-eps^2);
-%kb=input('Enter the gain for Wb = '); 
-%kchi=input('Enter the gain for Wchi = ');
-
-kb=7e3;
-kchi = 20e3;
+% kb=input('Enter the gain for Wb = '); 
+% kchi=input('Enter the gain for Wchi = ');
+kb = 7000;
+kchi = 20000;
 Wb=(kb*s1b*s2b)/((s-s1b)*(s-s2b));
 Wchi=(kchi*s1chi*s2chi)/((s-s1chi)*(s-s2chi));
 
-% w=logspace(-2,4,2*100040);
-% [A_wb,phi_wb] = bode(Wb,w);
-% figure
-% subplot(2,1,1)
-% loglog(w,A_wb(:))
-% grid on
-% subplot(2,1,2)
-% semilogx(w,phi_wb(:))
-% grid on
-% sgtitle("Wb")
-% 
-% [A_wchi,phi_wchi] = bode(Wchi,w);
-% figure
-% subplot(2,1,1)
-% loglog(w,A_wchi(:))
-% grid on
-% subplot(2,1,2)
-% semilogx(w,phi_wchi(:))
-% grid on
-% sgtitle("Wchi")
-%%
 %Extracting the extended model
 [A_Pe,B_Pe,C_Pe,D_Pe] = linmod('Extended_model');% state space parameters of the extended system: Pe
 Pe=ss(A_Pe,B_Pe,C_Pe,D_Pe);
-%%
+
 %Calculating the controller
 ncont = 2;%Number of control inputs
 nmeas = 2;%Number of measured outputs provided to the controller
@@ -104,5 +62,14 @@ Pe=minreal(Pe);%This syntax cancels pole-zero pairs in transfer
 %characteristics as the original model.
 [K,Pec,gamma,info]=hinfsyn(Pe,nmeas,ncont,'method','lmi'); % for working with the error
 [Ainf, Binf, Cinf, Dinf]=ssdata(K);
+%%
+out10 = sim("H_inf",'StartTime','0','StopTime','20','FixedStep','0.01');
 
+%%
 %Now use the controller K in your simulation
+% figure
+% bodemag(Wa1, Wa2, Wb, Wchi)
+% xline(7.3855)
+% hold on
+% xline(7.8558)
+% legend("Wa1","Wa2","Wb","Wchi")
