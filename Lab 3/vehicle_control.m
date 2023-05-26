@@ -208,7 +208,7 @@ Fa1_2_8 = out9_1.exc2_8_Fa1;
 Fa2_2_8 = out9_1.exc2_8_Fa2;
 
 F_check = [Fa1_1;Fa2_1;Fa1_2_1;Fa2_2_1;Fa1_2_8;Fa2_2_8];
-check_magn = max(F_check)
+check_magn_SH = max(F_check)
 
 %% Task 10 - Hinf
 run("H_inf_ctrl.m")
@@ -289,7 +289,7 @@ plot(time_hinf,z_hinf_exc1,'LineWidth',1)
 hold on
 plot(time,z_sh_exc1,'LineWidth',1)
 hold on
-plot(time,z_pas_exc1,'--')
+plot(time,z_pas_exc1,'m--')
 grid on
 title("$z$ Excitation 1",'Interpreter','latex')
 legend("H inf","SH","Passive")
@@ -300,7 +300,7 @@ plot(time_hinf,chi_hinf_exc1,'LineWidth',1)
 hold on
 plot(time,chi_sh_exc1,'LineWidth',1)
 hold on
-plot(time,chi_pas_exc1,'--')
+plot(time,chi_pas_exc1,'m--')
 grid on
 title("$\chi$ Excitation 1",'Interpreter','latex')
 legend("H inf","SH","Passive")
@@ -311,9 +311,9 @@ plot(time_hinf,z_hinf_exc2_1,'LineWidth',1)
 hold on
 plot(time,z_sh_exc2_1,'LineWidth',1)
 hold on
-plot(time,z_pas_exc2_1,'--')
+plot(time,z_pas_exc2_1,'m--')
 grid on
-title("$z$ Excitation 2.1",'Interpreter','latex')
+title("$z$ Excitation 2 (1 hz)",'Interpreter','latex')
 legend("H inf","SH","Passive")
 xlim([0,5])
 
@@ -322,9 +322,9 @@ plot(time_hinf,chi_hinf_exc2_1,'LineWidth',1)
 hold on
 plot(time,chi_sh_exc2_1,'LineWidth',1)
 hold on
-plot(time,chi_pas_exc2_1,'--')
+plot(time,chi_pas_exc2_1,'m--')
 grid on
-title("$\chi$ Excitation 2.1",'Interpreter','latex')
+title("$\chi$ Excitation 2 (1 hz)",'Interpreter','latex')
 legend("H inf","SH","Passive")
 xlim([0,5])
 
@@ -333,9 +333,9 @@ plot(time_hinf,z_hinf_exc2_8,'LineWidth',1)
 hold on
 plot(time,z_sh_exc2_8,'LineWidth',1)
 hold on
-plot(time,z_pas_exc2_8,'--')
+plot(time,z_pas_exc2_8,'m--')
 grid on
-title("$z$ Excitation 2.8",'Interpreter','latex')
+title("$z$ Excitation 2 (8 hz)",'Interpreter','latex')
 legend("H inf","SH","Passive")
 xlim([0,5])
 
@@ -344,72 +344,166 @@ plot(time_hinf,chi_hinf_exc2_8,'LineWidth',1)
 hold on
 plot(time,chi_sh_exc2_8,'LineWidth',1)
 hold on
-plot(time,chi_pas_exc2_8,'--')
+plot(time,chi_pas_exc2_8,'m--')
 grid on
-title("$\chi$ Excitation 2.8",'Interpreter','latex')
+title("$\chi$ Excitation 2 (8 hz)",'Interpreter','latex')
 legend("H inf","SH","Passive")
 xlim([0,5])
 
 %% Task 11.2
-run("H_inf_ctrl_11_2.m")
-z_hinf_exc1_t11_2 = out11_2.z_exc1;
-chi_hinf_exc1_t11_2 = out11_2.chi_exc1;
-z_hinf_exc2_1_t11_2 = out11_2.z_exc2_1;
-chi_hinf_exc2_1_t11_2 = out11_2.chi_exc2_1;
-z_hinf_exc2_8_t11_2 = out11_2.z_exc2_8;
-chi_hinf_exc2_8_t11_2 = out11_2.chi_exc2_8;
-time_hinf_11_2 = out11_2.tout;
+run("H_inf_ctrl_11_2_p.m")
+z_hinf_exc1_t11_2_p = out11_2_p.z_exc1;
+chi_hinf_exc1_t11_2_p = out11_2_p.chi_exc1;
+z_hinf_exc2_1_t11_2_p = out11_2_p.z_exc2_1;
+chi_hinf_exc2_1_t11_2_p = out11_2_p.chi_exc2_1;
+z_hinf_exc2_8_t11_2_p = out11_2_p.z_exc2_8;
+chi_hinf_exc2_8_t11_2_p = out11_2_p.chi_exc2_8;
+time_hinf_11_2 = out11_2_p.tout;
 
 figure
 subplot(2,1,1)
-plot(time_hinf,z_hinf_exc1,'LineWidth',1)
+plot(time_hinf,z_hinf_exc1,'--')
 hold on
-plot(time_hinf_11_2,z_hinf_exc1_t11_2,'--')
+plot(time_hinf_11_2,z_hinf_exc1_t11_2_p,'LineWidth',1)
 grid on
 title("(11.2) $z$ Excitation 1 ",'Interpreter','latex')
-legend("H inf","changed c")
+legend("H inf","changed k +15%")
+xlim([0,7])
 
 subplot(2,1,2)
-plot(time_hinf,chi_hinf_exc1,'LineWidth',1)
+plot(time_hinf,chi_hinf_exc1,'--')
 hold on
-plot(time_hinf_11_2,chi_hinf_exc1_t11_2,'--')
+plot(time_hinf_11_2,chi_hinf_exc1_t11_2_p,'LineWidth',1)
 grid on
 title("(11.2) $\chi$ Excitation 1",'Interpreter','latex')
-legend("H inf","changed c")
+legend("H inf","changed k +15%")
+xlim([0,7])
 
+
+Fa1_1_inf = out11_2_p.Fa1_exc1;
+Fa2_1_inf = out11_2_p.Fa2_exc1;
+Fa1_2_1_inf = out11_2_p.Fa1_exc2_1;
+Fa2_2_1_inf = out11_2_p.Fa2_exc2_1;
+Fa1_2_8_inf = out11_2_p.Fa1_exc2_8;
+Fa2_2_8_inf = out11_2_p.Fa2_exc2_8;
+
+F_check_inf = [Fa1_1_inf;Fa2_1_inf;Fa1_2_1_inf;Fa2_2_1_inf;Fa1_2_8_inf;Fa2_2_8_inf];
+check_magn_inf_11_2_p = max(F_check_inf)
+
+
+% reduce stiffness by 15%
+run("H_inf_ctrl_11_2_m.m")
+z_hinf_exc1_t11_2_m = out11_2_m.z_exc1;
+chi_hinf_exc1_t11_2_m = out11_2_m.chi_exc1;
+z_hinf_exc2_1_t11_2_m = out11_2_m.z_exc2_1;
+chi_hinf_exc2_1_t11_2_m = out11_2_m.chi_exc2_1;
+z_hinf_exc2_8_t11_2_m = out11_2_m.z_exc2_8;
+chi_hinf_exc2_8_t11_2_m = out11_2_m.chi_exc2_8;
+time_hinf_11_2_m = out11_2_m.tout;
 
 figure
 subplot(2,1,1)
-plot(time_hinf,z_hinf_exc2_1,'LineWidth',1)
+plot(time_hinf,z_hinf_exc1,'--')
 hold on
-plot(time_hinf_11_2,z_hinf_exc2_1_t11_2,'--')
+plot(time_hinf_11_2_m,z_hinf_exc1_t11_2_m,'LineWidth',1)
 grid on
-title("(11.2) $z$ Excitation 2.1",'Interpreter','latex')
-legend("H inf","changed c")
-
-
+title("(11.2) $z$ Excitation 1 ",'Interpreter','latex')
+legend("H inf","changed k -15%")
+xlim([0,7])
 
 subplot(2,1,2)
-plot(time_hinf,chi_hinf_exc2_1,'LineWidth',1)
+plot(time_hinf,chi_hinf_exc1,'--')
 hold on
-plot(time_hinf_11_2,chi_hinf_exc2_1_t11_2,'--')
+plot(time_hinf_11_2_m,chi_hinf_exc1_t11_2_m,'LineWidth',1)
 grid on
-title("(11.2) $\chi$ Excitation 2.1",'Interpreter','latex')
-legend("H inf","changed c")
+title("(11.2) $\chi$ Excitation 1",'Interpreter','latex')
+legend("H inf","changed k -15%")
+xlim([0,7])
+
+Fa1_1_inf = out11_2_m.Fa1_exc1;
+Fa2_1_inf = out11_2_m.Fa2_exc1;
+Fa1_2_1_inf = out11_2_m.Fa1_exc2_1;
+Fa2_2_1_inf = out11_2_m.Fa2_exc2_1;
+Fa1_2_8_inf = out11_2_m.Fa1_exc2_8;
+Fa2_2_8_inf = out11_2_m.Fa2_exc2_8;
+
+F_check_inf = [Fa1_1_inf;Fa2_1_inf;Fa1_2_1_inf;Fa2_2_1_inf;Fa1_2_8_inf;Fa2_2_8_inf];
+check_magn_inf_11_2_m = max(F_check_inf)
+
+%% Task 11.3
+run("H_inf_ctrl_11_3_light.m")
+z_hinf_exc1_t11_3_l = out11_3_l.z_exc1;
+chi_hinf_exc1_t11_3_l = out11_3_l.chi_exc1;
+z_hinf_exc2_1_t11_3_l = out11_3_l.z_exc2_1;
+chi_hinf_exc2_1_t11_3_l = out11_3_l.chi_exc2_1;
+z_hinf_exc2_8_t11_3_l = out11_3_l.z_exc2_8;
+chi_hinf_exc2_8_t11_3_l = out11_3_l.chi_exc2_8;
+time_hinf_11_3_l = out11_3_l.tout;
 
 figure
 subplot(2,1,1)
-plot(time_hinf,z_hinf_exc2_8,'LineWidth',1)
+plot(time_hinf,z_hinf_exc1,'--')
 hold on
-plot(time_hinf_11_2,z_hinf_exc2_8_t11_2,'--')
+plot(time_hinf_11_3_l,z_hinf_exc1_t11_3_l,'LineWidth',1)
 grid on
-title("(11.2) $z$ Excitation 2.8",'Interpreter','latex')
-legend("H inf","changed c")
+title("(11.3) $z$ Excitation 1 ",'Interpreter','latex')
+legend("H inf","light car")
+xlim([0,7])
 
 subplot(2,1,2)
-plot(time_hinf,chi_hinf_exc2_8,'LineWidth',1)
+plot(time_hinf,chi_hinf_exc1,'--')
 hold on
-plot(time_hinf_11_2,chi_hinf_exc2_8_t11_2,'--')
+plot(time_hinf_11_3_l,chi_hinf_exc1_t11_3_l,'LineWidth',1')
 grid on
-title("(11.2) $\chi$ Excitation 2.8",'Interpreter','latex')
-legend("H inf","changed c")
+title("(11.3) $\chi$ Excitation 1",'Interpreter','latex')
+legend("H inf","light car")
+xlim([0,7])
+
+
+Fa1_1_inf = out11_3_l.Fa1_exc1;
+Fa2_1_inf = out11_3_l.Fa2_exc1;
+Fa1_2_1_inf = out11_3_l.Fa1_exc2_1;
+Fa2_2_1_inf = out11_3_l.Fa2_exc2_1;
+Fa1_2_8_inf = out11_3_l.Fa1_exc2_8;
+Fa2_2_8_inf = out11_3_l.Fa2_exc2_8;
+
+F_check_inf = [Fa1_1_inf;Fa2_1_inf;Fa1_2_1_inf;Fa2_2_1_inf;Fa1_2_8_inf;Fa2_2_8_inf];
+check_magn_inf_11_3_light = max(F_check_inf)
+
+run("H_inf_ctrl_11_3_heavy.m")
+z_hinf_exc1_t11_3_h = out11_3_h.z_exc1;
+chi_hinf_exc1_t11_3_h = out11_3_h.chi_exc1;
+z_hinf_exc2_1_t11_3_h = out11_3_h.z_exc2_1;
+chi_hinf_exc2_1_t11_3_h = out11_3_h.chi_exc2_1;
+z_hinf_exc2_8_t11_3_h = out11_3_h.z_exc2_8;
+chi_hinf_exc2_8_t11_3_h = out11_3_h.chi_exc2_8;
+time_hinf_11_3_h = out11_3_h.tout;
+
+figure
+subplot(2,1,1)
+plot(time_hinf,z_hinf_exc1,'--')
+hold on
+plot(time_hinf_11_3_h,z_hinf_exc1_t11_3_h,'LineWidth',1)
+grid on
+title("(11.3) $z$ Excitation 1 ",'Interpreter','latex')
+legend("H inf","heavy car")
+xlim([0,7])
+
+subplot(2,1,2)
+plot(time_hinf,chi_hinf_exc1,'--')
+hold on
+plot(time_hinf_11_3_h,chi_hinf_exc1_t11_3_h,'LineWidth',1')
+grid on
+title("(11.3) $\chi$ Excitation 1",'Interpreter','latex')
+legend("H inf","heavy car")
+xlim([0,7])
+
+Fa1_1_inf = out11_3_h.Fa1_exc1;
+Fa2_1_inf = out11_3_h.Fa2_exc1;
+Fa1_2_1_inf = out11_3_h.Fa1_exc2_1;
+Fa2_2_1_inf = out11_3_h.Fa2_exc2_1;
+Fa1_2_8_inf = out11_3_h.Fa1_exc2_8;
+Fa2_2_8_inf = out11_3_h.Fa2_exc2_8;
+
+F_check_inf = [Fa1_1_inf;Fa2_1_inf;Fa1_2_1_inf;Fa2_2_1_inf;Fa1_2_8_inf;Fa2_2_8_inf];
+check_magn_inf_11_3_heavy = max(F_check_inf)

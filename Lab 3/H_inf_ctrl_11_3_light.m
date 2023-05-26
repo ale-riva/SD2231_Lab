@@ -3,10 +3,10 @@
 s=tf('s');
 
 % systme parameters
-m=1.15*22000;   %kg
-j=1.15*700e3;   %kgm^2
-c=40e3;    %Ns/m
-k=2*300e3; %N/m
+m=0.85*22000;   %kg
+j=0.85*700e3;   %kgm^2
+c=1.15*40e3;    %Ns/m
+k=1.15*2*300e3; %N/m
 L=6;       %m
 
 %% State space model for skyhook contorl
@@ -45,12 +45,12 @@ s2chi=-eps-1i*sqrt(wnchi^2-eps^2);
 % kb=input('Enter the gain for Wb = '); 
 % kchi=input('Enter the gain for Wchi = ');
 kb = 7000;
-kchi = 20000;
+kchi = 5000;
 Wb=(kb*s1b*s2b)/((s-s1b)*(s-s2b));
 Wchi=(kchi*s1chi*s2chi)/((s-s1chi)*(s-s2chi));
 
 %Extracting the extended model
-[A_Pe,B_Pe,C_Pe,D_Pe] = linmod('Extended_model');% state space parameters of the extended system: Pe
+[A_Pe,B_Pe,C_Pe,D_Pe] = linmod('Extended_model_s');% state space parameters of the extended system: Pe
 Pe=ss(A_Pe,B_Pe,C_Pe,D_Pe);
 
 %Calculating the controller
@@ -59,10 +59,10 @@ nmeas = 2;%Number of measured outputs provided to the controller
 Pe=minreal(Pe);%This syntax cancels pole-zero pairs in transfer
 %functions. The output system has minimal order and the same response
 %characteristics as the original model.
-[K,Pec,gamma,info]=hinfsyn(Pe,nmeas,ncont,'method','lmi'); % for working with the error
-[Ainf, Binf, Cinf, Dinf]=ssdata(K);
+%[K,Pec,gamma,info]=hinfsyn(Pe,nmeas,ncont,'method','lmi'); % for working with the error
+%[Ainf, Binf, Cinf, Dinf]=ssdata(K);
 %%
-out11_2 = sim("H_inf_2021",'StartTime','0','StopTime','20','FixedStep','0.01');
+out11_3_l = sim("H_inf_2021",'StartTime','0','StopTime','20','FixedStep','0.01');
 
 %%
 %Now use the controller K in your simulation

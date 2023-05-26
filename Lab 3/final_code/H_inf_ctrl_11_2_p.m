@@ -6,7 +6,7 @@ s=tf('s');
 m=22000;   %kg
 j=700e3;   %kgm^2
 c=40e3;    %Ns/m
-k=2*300e3; %N/m
+k=1.15*2*300e3; %N/m
 L=6;       %m
 
 %% State space model for skyhook contorl
@@ -59,10 +59,10 @@ nmeas = 2;%Number of measured outputs provided to the controller
 Pe=minreal(Pe);%This syntax cancels pole-zero pairs in transfer
 %functions. The output system has minimal order and the same response
 %characteristics as the original model.
-[K,Pec,gamma,info]=hinfsyn(Pe,nmeas,ncont,'method','lmi'); % for working with the error
-[Ainf, Binf, Cinf, Dinf]=ssdata(K);
+%[K,Pec,gamma,info]=hinfsyn(Pe,nmeas,ncont,'method','lmi'); % for working with the error
+%[Ainf, Binf, Cinf, Dinf]=ssdata(K);
 %%
-out10 = sim("H_inf_2021",'StartTime','0','StopTime','20','FixedStep','0.01');
+out11_2_p = sim("H_inf_2021",'StartTime','0','StopTime','20','FixedStep','0.01');
 
 %%
 %Now use the controller K in your simulation
